@@ -1,1 +1,11 @@
 /* Home specific style */
+
+.portfolio {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.pic {
+    max-width: 32%;
+}

@@ -26,11 +26,11 @@ add_theme_support( 'title-tag' );
 // Admin bar
 show_admin_bar(false);
 
-// Disable Tags
-function jmartini_unregister_tags(){
-    unregister_taxonomy_for_object_type('post_tag', 'post');
+// Hide posts
+function jmartini_remove_admin_menus() {
+    remove_menu_page( 'edit.php' );
 }
-add_action( 'init', 'jmartini_unregister_tags' );
+add_action( 'admin_menu', 'jmartini_remove_admin_menus' );
 
 
 /*-----------------------------------------------------------------------------------*/
@@ -75,6 +75,7 @@ function jmartini_remove_submenus() {
   remove_menu_page( 'edit-comments.php' );
 }
 add_action( 'admin_menu', 'jmartini_remove_submenus', 999 );
+
 function jmartini_remove_top_menus( $wp_admin_bar ){
     $wp_admin_bar->remove_node( 'wp-logo' );
 }
@@ -91,12 +92,6 @@ function jmartini_iframe_add_wrapper( $return, $data, $url ){
     return "<div class='wrapper-video'>{$return}</div>";
 }
 add_filter( 'oembed_dataparse', 'jmartini_iframe_add_wrapper', 10, 3 );
-
-// Enlever les <p> autour des images
-function jmartini_remove_p_around_images($content){
-   return preg_replace('/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/iU', '\1\2\3', $content);
-}
-add_filter( 'the_content', 'jmartini_remove_p_around_images' );
 
 // Allow svg in media library
 function jmartini_mime_types($mimes){
@@ -119,35 +114,6 @@ function jmartini_right_now_custom_post() {
     }
 }
 add_action( 'dashboard_glance_items', 'jmartini_right_now_custom_post' );
-
-// Add new styles to wysiwyg
-function jmartini_button( $buttons ){
-    array_unshift( $buttons, 'styleselect' );
-    return $buttons;
-}
-add_filter( 'mce_buttons_2', 'jmartini_button' );
-function jmartini_init_editor_styles(){
-    add_editor_style();
-}
-add_action( 'after_setup_theme', 'jmartini_init_editor_styles' );
-
-// Customize a bit the wysiwyg editor
-function jmartini_mce_before_init( $styles ){
-    $style_formats = array(
-        array(
-            'title' => 'Button',
-            'selector' => 'a',
-            'classes' => 'btn'
-        )
-    );
-    $styles['style_formats'] = json_encode( $style_formats );
-    // Remove h1 and code
-    $styles['block_formats'] = 'Paragraph=p;Heading 2=h2;Heading 3=h3;Heading 4=h4;Heading 5=h5;Heading 6=h6';
-    // Let only the colors you want
-    $styles['textcolor_map'] = '[' . "'000000', 'Noir', '565656', 'Texte'" . ']';
-    return $styles;
-}
-add_filter( 'tiny_mce_before_init', 'jmartini_mce_before_init' );
 
 // Option page
 function jmartini_menu_order( $menu_ord ){  
@@ -213,26 +179,28 @@ add_filter( 'nav_menu_css_class', 'jmartini_css_attributes_filter' );
 /*-----------------------------------------------------------------------------------*/
 /* Post types
 /*-----------------------------------------------------------------------------------*/
-// function jmartini_post_type(){
-//     register_post_type( 'resource', array(
-//         'label' => 'Resources',
-//         'singular_label' => 'Resource',
-//         'public' => true,
-//         'menu_icon' => 'dashicons-portfolio',
-//         'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'revisions'),
-//     ));
-// }
-// add_action( 'init', 'jmartini_post_type' );
+function jmartini_post_type(){
+    register_post_type( 'photo', array(
+        'label' => 'Photos',
+        'singular_label' => 'Photo',
+        'public' => true,
+        'menu_icon' => 'dashicons-portfolio',
+        'supports' => array('title', 'thumbnail'),
+        'public' => true,
+        'publicly_queryable' => false,
+    ));
+}
+add_action( 'init', 'jmartini_post_type' );
 
-// function jmartini_taxonomies(){
-//     register_taxonomy( 'resource_cat', array('resource'), array(
-//         'label' => 'Categories',
-//         'singular_label' => 'Category',
-//         'hierarchical' => true,
-//         'show_admin_column' => true
-//     ) );
-// }
-// add_action( 'init', 'jmartini_taxonomies' );
+function jmartini_taxonomies(){
+    register_taxonomy( 'serie', array('photo'), array(
+        'label' => 'Series',
+        'singular_label' => 'Serie',
+        'hierarchical' => true,
+        'show_admin_column' => true
+    ) );
+}
+add_action( 'init', 'jmartini_taxonomies' );
 
 
 /*-----------------------------------------------------------------------------------*/
@@ -302,8 +270,6 @@ function jmartini_register_required_plugins(){
 		'is_automatic' => false,
 		'message'      => ''
     );
-
-    print_r('COUCOU');
 
 	tgmpa( $plugins, $config );
 }

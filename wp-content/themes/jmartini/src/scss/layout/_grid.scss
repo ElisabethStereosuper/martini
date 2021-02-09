@@ -1,7 +1,12 @@
 /* Grid */
 
 .wrapper {
+    display: flex;
     overflow-x: hidden;
+}
+
+.sidebar {
+    width: 20%;
 }
 
 .container {

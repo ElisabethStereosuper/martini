@@ -15,14 +15,21 @@
 
 	<body <?php body_class(); ?>>
 
-		<header role='banner'>
+		<div class="wrapper">
 
-			<nav role='navigation'>
-				<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'menu_class' => 'menu-main' ) ); ?>
-			</nav>
+			<div class="sidebar">
+				<header role='banner'>
 
-			<a href='<?php echo home_url('/'); ?>' title='<?php bloginfo( 'name' ); ?>' rel='home'><?php bloginfo( 'name' ); ?></a>
+					<a href='./' title='J. Martini' rel='home'>J. Martini</a>
 
-		</header>
+					<!-- <nav role='navigation'>
+						<?php //wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'menu_class' => 'menu-main' ) ); ?>
+					</nav> -->
 
-		<main role='main'>
+				</header>
+
+				<footer role='contentinfo'>
+				</footer>
+			</div>
+
+			<main role='main'>

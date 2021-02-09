@@ -318,7 +318,10 @@ a:active {
     font-size: 1.8rem; } }
 /* Grid */
 .wrapper {
+  display: flex;
   overflow-x: hidden; }
+.sidebar {
+  width: 20%; }
 .container {
   max-width: 1400px;
   padding: 0 35px;
@@ -353,6 +356,12 @@ button {
 /* Header */
 /* Footer */
 /* Home specific style */
+.portfolio {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; }
+.pic {
+  max-width: 32%; }
 /******* PRINT *******/
 @media print {
   *, *:before {
@@ -372,4 +381,4 @@ button {
     page-break-after: avoid; } }
 
 
-/*# sourceMappingURL=main.css.map?0ea5c7936a610bf826c4e2b58a0eae01*/
+/*# sourceMappingURL=main.css.map?f0174838ec6f72815e136fb28f2ec418*/
