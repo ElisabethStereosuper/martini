@@ -188,6 +188,7 @@ function jmartini_post_type(){
         'supports' => array('title', 'thumbnail'),
         'public' => true,
         'publicly_queryable' => false,
+        'show_in_rest' => true,
     ));
 }
 add_action( 'init', 'jmartini_post_type' );

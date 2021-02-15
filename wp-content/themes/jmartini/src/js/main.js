@@ -18,20 +18,12 @@ const dynamicLoading = ({ name }) => async () => {
 };
 // ⚠️ DO NOT REMOVE ⚠️
 
-// Dynamic imports
-// The dynamicLoading function will search for the component DynamicExample in ./js/components folder
-const dynamicImportsExample = dynamicLoading({ name: 'DynamicExample' });
+import loadContent from './components/loadContent';
 
 // Initialization functions
 const preloadCallback = () => {
     // All actions needed at page load
-
-    // Example of component called only on the /test route
-    // Assuming the .test class is applied on html or body tag
-    bodyRouter({
-        identifier: '.test',
-        callback: dynamicImportsExample
-    });
+    loadContent();
 };
 
 const loadCallback = () => {
@@ -51,5 +43,5 @@ window.$stereorepo.superLoad.initializeLoadingShit({
     preloadCallback,
     loadCallback,
     animationsCallback,
-    noTransElementsClass: '.element-without-transition-on-resize'
+    noTransElementsClass: '.elt-no-resize-transition'
 });
