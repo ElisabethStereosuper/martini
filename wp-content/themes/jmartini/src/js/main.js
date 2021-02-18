@@ -23,11 +23,11 @@ import loadContent from './components/loadContent';
 // Initialization functions
 const preloadCallback = () => {
     // All actions needed at page load
-    loadContent();
 };
 
 const loadCallback = () => {
     // All actions needed after page load (like click events for example)
+    loadContent();
 };
 
 const animationsCallback = () => {

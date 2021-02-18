@@ -131,7 +131,7 @@ add_filter( 'menu_order', 'jmartini_menu_order' );
 /*-----------------------------------------------------------------------------------*/
 /* Menus
 /*-----------------------------------------------------------------------------------*/
-register_nav_menus( array('primary' => 'Primary Menu') );
+//register_nav_menus( array('primary' => 'Primary Menu') );
 
 // Cleanup WP Menu html
 function jmartini_css_attributes_filter($var){
@@ -143,37 +143,46 @@ add_filter( 'nav_menu_css_class', 'jmartini_css_attributes_filter' );
 /*-----------------------------------------------------------------------------------*/
 /* Sidebar & Widgets
 /*-----------------------------------------------------------------------------------*/
-// function jmartini_register_sidebars(){
-// 	register_sidebar( array(
-// 		'id' => 'sidebar',
-// 		'name' => 'Sidebar',
-// 		'description' => 'Take it on the side...',
-// 		'before_widget' => '',
-// 		'after_widget' => '',
-// 		'before_title' => '',
-// 		'after_title' => '',
-// 		'empty_title'=> ''
-// 	) );
-// }
-// add_action( 'widgets_init', 'jmartini_register_sidebars' );
+function jmartini_register_sidebars(){
+	register_sidebar( array(
+		'id' => 'sidebar',
+		'name' => 'Sidebar',
+		'description' => 'Take it on the side...',
+		'before_widget' => '<div>',
+		'after_widget' => '</div>',
+		'before_title' => '<p class="widget-title">',
+		'after_title' => '</p>',
+		'empty_title'=> ''
+    ) );
+    
+    register_sidebar( array(
+		'id' => 'footer',
+		'name' => 'Footer',
+		'description' => 'Take it at the bottom...',
+		'before_widget' => '',
+		'after_widget' => '',
+		'before_title' => '',
+		'after_title' => '',
+		'empty_title'=> ''
+	) );
+}
+add_action( 'widgets_init', 'jmartini_register_sidebars' );
 
 // Deregister default widgets
-// function jmartini_unregister_default_widgets(){
-//     unregister_widget('WP_Widget_Pages');
-//     unregister_widget('WP_Widget_Calendar');
-//     unregister_widget('WP_Widget_Archives');
-//     unregister_widget('WP_Widget_Links');
-//     unregister_widget('WP_Widget_Meta');
-//     unregister_widget('WP_Widget_Search');
-//     unregister_widget('WP_Widget_Text');
-//     unregister_widget('WP_Widget_Categories');
-//     unregister_widget('WP_Widget_Recent_Posts');
-//     unregister_widget('WP_Widget_Recent_Comments');
-//     unregister_widget('WP_Widget_RSS');
-//     unregister_widget('WP_Widget_Tag_Cloud');
-//     unregister_widget('WP_Nav_Menu_Widget');
-// }
-// add_action( 'widgets_init', 'jmartini_unregister_default_widgets' );
+function jmartini_unregister_default_widgets(){
+    unregister_widget('WP_Widget_Pages');
+    unregister_widget('WP_Widget_Calendar');
+    unregister_widget('WP_Widget_Archives');
+    unregister_widget('WP_Widget_Links');
+    unregister_widget('WP_Widget_Meta');
+    unregister_widget('WP_Widget_Search');
+    unregister_widget('WP_Widget_Categories');
+    unregister_widget('WP_Widget_Recent_Posts');
+    unregister_widget('WP_Widget_Recent_Comments');
+    unregister_widget('WP_Widget_RSS');
+    unregister_widget('WP_Widget_Tag_Cloud');
+}
+add_action( 'widgets_init', 'jmartini_unregister_default_widgets' );
 
 
 /*-----------------------------------------------------------------------------------*/

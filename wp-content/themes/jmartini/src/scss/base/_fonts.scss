@@ -1,8 +1,7 @@
 // @font-face {
-//     font-family: '[Your font family name]';
-//     src: local('[Your font family name]'),
-//         url('../fonts/[Your-font-family-name].woff2') format('woff2'),
-//         url('../fonts/[Your-font-family-name].woff') format('woff');
+//     font-family: 'Barlow Condensed';
+//     src: local('Barlow Condensed'), url('../../fonts/barlowcondensed-regular-webfont.woff2') format('woff2'),
+//         url('../../fonts/barlowcondensed-regular-webfont.woff') format('woff');
 //     font-display: swap;
 //     font-style: normal;
 //     font-weight: 400;
@@ -10,12 +9,11 @@
 // }
 
 // @font-face {
-//     font-family: '[Your font family name]';
-//     src: local('[Your font family name] Italic'),
-//         url('../fonts/[Your-font-family-name]-Italic.woff2') format('woff2'),
-//         url('../fonts/[Your-font-family-name]-Italic.woff') format('woff');
-//     font-display: swap;
-//     font-style: italic;
-//     font-weight: 400;
-//     unicode-range: U+000-5FF; /* Latin glyphs */
+//     font-family: 'Raleway';
+//     src: local('Raleway'), url('../../fonts/raleway-variablefont_wght-webfont.woff2') format('woff2'),
+//         url('../../fonts/raleway-variablefont_wght-webfont.woff') format('woff');
+//     //font-display: swap;
+//     font-style: normal;
+//     font-weight: 500;
+//     //unicode-range: U+000-5FF; /* Latin glyphs */
 // }
