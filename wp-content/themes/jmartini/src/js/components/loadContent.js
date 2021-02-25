@@ -42,7 +42,6 @@ const loadContent = () => {
     // Pop the popin
     const loadPopin = link => {
         const img = document.createElement('img');
-        
         img.src = link.href;
 
         popinContent.innerHTML = '';
@@ -58,12 +57,13 @@ const loadContent = () => {
     // Popin events
     const addPopinEvents = () => {
         forEach(document.getElementsByClassName('pic-link'), link => {
+            link.classList.remove('off');
             link.addEventListener('click', e => {
                 e.preventDefault();
                 loadPopin(link);
             }, false);
         });
-    }
+    };
 
     const nextPic = lastPic => {
         const pics = document.getElementsByClassName('pic');
@@ -124,18 +124,18 @@ const loadContent = () => {
 
                 // Recalculate Macy layout
                 macy.runOnImageLoad(() => {
-                    macy.recalculate(true, true);
-                }, true);
+                    //macy.recalculate(true, true);
 
-                // Add popin events
-                addPopinEvents();
+                    // Add popin events
+                    addPopinEvents();
+
+                    // Call again next pic in popin if loading pics was made from popin
+                    if (loadFromPopin) nextPic();
+                }, true);
 
                 // Increase every time content is loaded
                 ++config.startPage;
-                
-                // Call again next pic in popin if loading pics was made from popin
-                if (loadFromPopin) nextPic();
-            }else if (request.status === 400){
+            } else if (request.status === 400) {
                 // Start over at begining of pics in popin if loading pics was made from popin
                 if (loadFromPopin) nextPic(true);
             }
@@ -156,7 +156,7 @@ const loadContent = () => {
         const postTemplate = post => {
             return `
                 <div class="pic">
-                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link">
+                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link off">
                         <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img" />
                         <p class="pic-text">${post.title.rendered}</p>
                     </a>
@@ -177,8 +177,12 @@ const loadContent = () => {
         popin.classList.remove('on');
     }, false);
 
-    popinNext.addEventListener('click', () => { nextPic(); }, false);
-    popinPrev.addEventListener('click', () => { prevPic(); }, false);
+    popinNext.addEventListener('click', () => {
+        nextPic();
+    }, false);
+    popinPrev.addEventListener('click', () => {
+        prevPic();
+    }, false);
 
     // Where the magic happens
     // Checks if IntersectionObserver is supported

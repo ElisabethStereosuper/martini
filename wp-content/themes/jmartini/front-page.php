@@ -14,7 +14,7 @@ if ( have_posts() ) : the_post();
 			
 			<?php while( $photosQuery->have_posts() ) : $photosQuery->the_post(); ?>
 				<div class="pic">
-					<a href="<?php echo get_the_post_thumbnail_url($post, 'full') ?>" class="pic-link">
+					<a href="<?php echo get_the_post_thumbnail_url($post, 'full') ?>" class="pic-link off">
 						<?php the_post_thumbnail('large'); ?>
 						<p class="pic-text"><?php the_title(); ?></p>
 					</a>

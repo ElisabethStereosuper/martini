@@ -186,12 +186,12 @@ sup {
   /* Latin glyphs */ }
 /******* GÉNÉRAL *******/
 ::-moz-selection {
-  background: rgba(0, 0, 0, 0.99);
-  color: #fff;
+  background: rgba(242, 230, 213, 0.99);
+  color: #000;
   text-shadow: none; }
 ::selection {
-  background: rgba(0, 0, 0, 0.99);
-  color: #fff;
+  background: rgba(242, 230, 213, 0.99);
+  color: #000;
   text-shadow: none; }
 html {
   font-size: 62.5%;
@@ -215,6 +215,8 @@ h6,
 h1 {
   font-size: 4rem;
   margin: 0; }
+h1 > a {
+    border: 0; }
 h2 {
   font-size: 3rem;
   margin: 0.83em 0; }
@@ -251,42 +253,25 @@ ol > li::before {
 ol ol {
     padding: 0 0 0 25px;
     margin: 1em 0; }
-dt,
-dd {
-  display: inline;
-  margin: 0; }
-dt::after {
-  content: ': '; }
-dd + dt::before {
-  content: '\A';
-  white-space: pre; }
-dd + dd::before {
-  content: ', ';
-  margin: 0 0 0 -0.25em; }
 img {
   max-width: 100%;
   height: auto; }
 svg {
   max-width: 100%; }
-code,
-pre {
-  display: block;
-  padding: 10px 15px;
-  margin: 1em 0;
-  background: grey; }
-hr {
-  height: 1px;
-  max-width: 250px;
-  border: 0;
-  margin: 3em auto 5em;
-  background: #000; }
 /******* LIENS / BOUTONS *******/
 button,
 input {
   color: inherit; }
 a {
+  display: inline-block;
+  border-bottom: solid 1px transparent;
+  position: relative;
+  line-height: 1;
   color: inherit;
-  text-decoration: none; }
+  text-decoration: none;
+  transition: 0.15s ease-in-out; }
+a:hover, a:focus, a.on {
+    border-color: currentColor; }
 a:active {
     filter: saturate(200%); }
 /******* CLASSES GENERALES  *******/
@@ -328,32 +313,6 @@ a:active {
   margin-top: 0; }
 .menu li {
     margin: 0 0 3px; }
-.menu a {
-    display: inline-block;
-    position: relative;
-    line-height: 1;
-    transition: 0.3s ease-in-out; }
-.menu a:hover, .menu a:focus, .menu a.on {
-      border-bottom: solid 1px; }
-@media (min-width: 580px) {
-  .wysiwyg h1,
-  .h1 {
-    font-size: 4rem; }
-  .wysiwyg h2,
-  .h2 {
-    font-size: 3.2rem; }
-  .wysiwyg h3,
-  .h3 {
-    font-size: 2.8rem; }
-  .wysiwyg h4,
-  .h4 {
-    font-size: 2.2rem; }
-  .wysiwyg h5,
-  .h5 {
-    font-size: 2rem; }
-  .wysiwyg h6,
-  .h6 {
-    font-size: 1.8rem; } }
 /* Grid */
 .sidebar {
   display: flex;
@@ -409,7 +368,6 @@ button {
 .footer {
   width: 100%;
   padding: 15px 0 0;
-  margin: 10vh 0 0;
   align-self: flex-end;
   font-size: 1.1rem;
   letter-spacing: 0;
@@ -451,9 +409,12 @@ button {
   transition: 0.3s ease-in-out; }
 .pic-link {
   display: block;
+  border: 0;
   position: relative; }
 .pic-link:hover .pic-text, .pic-link:focus .pic-text {
     transform: translate3d(0, 0, 0); }
+.pic-link.off {
+    opacity: 0; }
 .pic-link > img {
     transition: 0.3s ease-in-out; }
 .pic-text {
@@ -576,4 +537,4 @@ button {
     page-break-after: avoid; } }
 
 
-/*# sourceMappingURL=main.css.map?bc525b0451defbc0b0201b2b987d866a*/
+/*# sourceMappingURL=main.css.map?79aaade05f74be464e77874d63b98cfa*/

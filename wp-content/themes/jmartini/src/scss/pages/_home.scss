@@ -37,12 +37,16 @@
 
 .pic-link {
     display: block;
+    border: 0;
     position: relative;
     &:hover,
     &:focus {
         .pic-text {
             transform: translate3d(0, 0, 0);
         }
+    }
+    &.off {
+        opacity: 0;
     }
     > img {
         transition: 0.3s ease-in-out;
