@@ -176,6 +176,14 @@ sup {
   font-size: 75%;
   line-height: 0;
   vertical-align: baseline; }
+@font-face {
+  font-family: 'DINEngschrift';
+  src: local("DINEngschrift"), url(/wp-content/themes/jmartini/fonts/DINEngschrift.woff2) format("woff2"), url(/wp-content/themes/jmartini/fonts/DINEngschrift.woff) format("woff");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+  unicode-range: U+000-5FF;
+  /* Latin glyphs */ }
 /******* GÉNÉRAL *******/
 ::-moz-selection {
   background: rgba(0, 0, 0, 0.99);
@@ -190,8 +198,10 @@ html {
   /* sets the base font to 10px for easier math */
   background: #fff; }
 body {
-  font: 1.6em/1.5 "Raleway", sans-serif;
-  color: #000; }
+  font: 1.4em/1.3 "Raleway", sans-serif;
+  letter-spacing: -0.02em;
+  color: #f2e6d5;
+  background: #000; }
 h1,
 h2,
 h3,
@@ -200,11 +210,11 @@ h5,
 h6,
 .widget-title {
   font-weight: 400;
-  font-family: "Barlow Condensed", "Raleway", sans-serif;
-  text-transform: uppercase; }
+  font-family: "DINEngschrift", "Raleway", sans-serif;
+  letter-spacing: 0; }
 h1 {
   font-size: 4rem;
-  margin: 0 0 0.5em; }
+  margin: 0; }
 h2 {
   font-size: 3rem;
   margin: 0.83em 0; }
@@ -271,8 +281,12 @@ hr {
   margin: 3em auto 5em;
   background: #000; }
 /******* LIENS / BOUTONS *******/
-a {
+button,
+input {
   color: inherit; }
+a {
+  color: inherit;
+  text-decoration: none; }
 a:active {
     filter: saturate(200%); }
 /******* CLASSES GENERALES  *******/
@@ -294,6 +308,11 @@ a:active {
   width: 100%; }
 .no-transition {
   transition: none !important; }
+.subtitle {
+  margin: -15px 0 0 10px;
+  font-size: 1.4rem;
+  opacity: 0.7;
+  letter-spacing: 0; }
 .widget-title {
   padding: 0 0 0 15px;
   position: relative;
@@ -307,6 +326,15 @@ a:active {
 .menu {
   padding: 0 0 0 15px;
   margin-top: 0; }
+.menu li {
+    margin: 0 0 3px; }
+.menu a {
+    display: inline-block;
+    position: relative;
+    line-height: 1;
+    transition: 0.3s ease-in-out; }
+.menu a:hover, .menu a:focus, .menu a.on {
+      border-bottom: solid 1px; }
 @media (min-width: 580px) {
   .wysiwyg h1,
   .h1 {
@@ -327,23 +355,19 @@ a:active {
   .h6 {
     font-size: 1.8rem; } }
 /* Grid */
-.wrapper {
-  overflow-x: hidden; }
 .sidebar {
   display: flex;
-  width: 250px;
+  width: 230px;
   height: 100vh;
   padding: 20px 20px 5px;
   flex-wrap: wrap;
   position: fixed;
   top: 0;
   left: 0;
-  overflow-y: auto;
-  background: #fff; }
+  overflow-y: auto; }
 .main {
   min-height: 100vh;
-  padding: 2px 2px 0 252px;
-  background: #000; }
+  padding: 1px 1px 0 231px; }
 .container {
   max-width: 1400px;
   padding: 0 35px;
@@ -385,20 +409,27 @@ button {
 .footer {
   width: 100%;
   padding: 15px 0 0;
-  position: relative;
   margin: 10vh 0 0;
   align-self: flex-end;
-  font-size: 1.1rem; }
-.footer:before {
-    content: '';
-    height: 4px;
-    position: absolute;
-    top: 0;
-    left: -20px;
-    right: -20px;
-    background: #000; }
+  font-size: 1.1rem;
+  letter-spacing: 0;
+  opacity: 0.9; }
 .footer p {
     margin: 0 0 5px; }
+.footer .menu {
+    padding: 0 0 15px;
+    position: relative;
+    margin: 0 0 15px;
+    font-size: 1.4rem; }
+.footer .menu:after {
+      content: '';
+      width: 30px;
+      height: 1px;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      background: #f2e6d5;
+      opacity: 0.7; }
 /* Home specific style */
 /*.portfolio {
     display: flex;
@@ -410,9 +441,122 @@ button {
 .pic {
     max-width: 32%;
 }*/
+.portfolio:hover .pic-link > img {
+  opacity: 0.7; }
+.portfolio .pic-link:hover > img, .portfolio .pic-link:focus > img {
+  opacity: 1; }
 .pic {
-  padding: 2px;
+  padding: 1px;
+  overflow: hidden;
   transition: 0.3s ease-in-out; }
+.pic-link {
+  display: block;
+  position: relative; }
+.pic-link:hover .pic-text, .pic-link:focus .pic-text {
+    transform: translate3d(0, 0, 0); }
+.pic-link > img {
+    transition: 0.3s ease-in-out; }
+.pic-text {
+  display: block;
+  padding: 5px 7px 2px 20px;
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: 0;
+  margin: 0;
+  font-family: "DINEngschrift", "Raleway", sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-transform: lowercase;
+  background: #000;
+  transform: translate3d(0, 100%, 0);
+  transition: 0.2s ease-in-out;
+  will-change: transform; }
+.popin {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  background: #000; }
+.popin.on {
+    display: block; }
+.popin > button {
+    position: absolute; }
+.popin-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center; }
+.popin-content > img {
+    max-height: 95%;
+    max-width: 95%; }
+.popin-close,
+.popin-nav {
+  position: absolute; }
+.popin-close > svg,
+  .popin-nav > svg {
+    fill: #fff;
+    transition: 0.3s ease-in-out;
+    transform-origin: 50% 50%; }
+.popin-close {
+  width: 50px;
+  height: 50px;
+  padding: 12px 14px 15px;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  border-radius: 50%;
+  background: #000;
+  transition: 0.3s ease-in-out;
+  transform-origin: 50% 50%; }
+.popin-close:hover, .popin-close:focus {
+    transform: scale(1.05); }
+.popin-close:hover > svg, .popin-close:focus > svg {
+      transform: scale(0.85); }
+.popin-nav {
+  width: 50%;
+  top: 0;
+  bottom: 0; }
+.popin-nav:hover:after,
+  .popin-nav:hover > svg, .popin-nav:focus:after,
+  .popin-nav:focus > svg {
+    transform: scale(1); }
+.popin-nav[disabled] {
+    opacity: 0.4; }
+.popin-nav:after,
+  .popin-nav > svg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    transition: 0.3s ease-in-out;
+    transform-origin: 50% 50%;
+    transform: scale(0); }
+.popin-nav:after {
+    content: '';
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #000; }
+.popin-nav > svg {
+    width: 24px;
+    z-index: 1; }
+.popin-prev {
+  left: 0; }
+.popin-prev:after {
+    left: 10px; }
+.popin-prev > svg {
+    left: 21px; }
+.popin-next {
+  right: 0; }
+.popin-next:after {
+    right: 10px; }
+.popin-next > svg {
+    right: 21px; }
 /******* PRINT *******/
 @media print {
   *, *:before {
@@ -432,4 +576,4 @@ button {
     page-break-after: avoid; } }
 
 
-/*# sourceMappingURL=main.css.map?3a749cf8acf0289433689f0afc63f39b*/
+/*# sourceMappingURL=main.css.map?bc525b0451defbc0b0201b2b987d866a*/

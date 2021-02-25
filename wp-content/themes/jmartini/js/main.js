@@ -11838,27 +11838,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var macy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! macy */ "./node_modules/macy/dist/macy.js");
 /* harmony import */ var macy__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(macy__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _stereorepo_sac__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @stereorepo/sac */ "./node_modules/@stereorepo/sac/src/index.js");
 
 
-// This pen is a real example of how to build an Infinite Scroll
-// in Vanilla JavaScript. I've used Fetch API, Intersection Observer API,
-// and WordPress REST API to fetch posts.
-// Feel free to fork, use and modify this code.
-//
-// Author: Cadu de Castro Alves
-// Twitter: https://twitter.com/castroalves
+
+// Infinite load author: Cadu de Castro Alves
 // GitHub: https://github.com/castroalves
+
 const loadContent = () => {
     // Basic Configuration
     const config = {
-        api: 'http://jmartini.local/wp-json/wp/v2/photo',
-        startPage: 1, // 0 for the first page, 1 for the second and so on...
-        postsPerPage: 12 // Number of posts to load per page
+        api: window.location.origin + '/wp-json/wp/v2/photo',
+        startPage: 2,
+        postsPerPage: 9
     };
 
     // Private Properties
-    let postsLoaded = false;
-    let postsContent = document.querySelector('#portfolio');
+    let postsLoaded = true;
+    let portfolio = document.querySelector('#portfolio');
     let btnLoadMore = document.querySelector('#load-more');
 
     // Macy layout
@@ -11870,18 +11867,67 @@ const loadContent = () => {
         columns: 1,
         mobileFirst: true,
         breakAt: {
-            1200: 4,
             980: 3,
             700: 2
         }
     });
 
-    // Private Methods
-    const loadPics = function () {
-        // Starts with page = 1
-        // Increase every time content is loaded
-        ++config.startPage;
+    // Popin
+    const popin = document.getElementById('popin');
+    const popinContent = popin.querySelector('#popin-content');
+    const popinClose = popin.querySelector('#popin-close');
+    const popinNext = popin.querySelector('#popin-next');
+    const popinPrev = popin.querySelector('#popin-prev');
+    let currentPic;
 
+    // Pop the popin
+    const loadPopin = link => {
+        const img = document.createElement('img');
+        
+        img.src = link.href;
+
+        popinContent.innerHTML = '';
+        popinContent.appendChild(img);
+
+        popin.classList.add('on');
+
+        currentPic = Array.prototype.slice.call(portfolio.children).indexOf(link.parentNode);
+
+        currentPic === 0 ? popinPrev.setAttribute('disabled', true) : popinPrev.removeAttribute('disabled');
+    };
+
+    // Popin events
+    const addPopinEvents = () => {
+        (0,_stereorepo_sac__WEBPACK_IMPORTED_MODULE_1__.forEach)(document.getElementsByClassName('pic-link'), link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                loadPopin(link);
+            }, false);
+        });
+    }
+
+    const nextPic = lastPic => {
+        const pics = document.getElementsByClassName('pic');
+        const nextPic = lastPic ? pics[0] : pics[currentPic + 1];
+
+        if (nextPic) {
+            loadPopin(nextPic.querySelector('.pic-link'));
+        } else {
+            loadPics(true);
+        }
+    };
+
+    const prevPic = () => {
+        const pics = document.getElementsByClassName('pic');
+        const prevPic = pics[currentPic - 1];
+
+        if (prevPic) {
+            loadPopin(prevPic.querySelector('.pic-link'));
+        }
+    };
+
+    // Private Methods
+    const loadPics = loadFromPopin => {
         // Basic query parameters to filter the API
         // Visit https://developer.wordpress.org/rest-api/reference/posts/#arguments
         // For information about other parameters
@@ -11912,13 +11958,27 @@ const loadContent = () => {
                 const postsHtml = renderPostHtml(posts);
 
                 // Adds the HTML into the posts div
-                postsContent.innerHTML += postsHtml;
+                portfolio.innerHTML += postsHtml;
 
                 // Required for the infinite scroll
                 postsLoaded = true;
 
                 // Recalculate Macy layout
-                macy.runOnImageLoad(() => { macy.recalculate(true, true); }, true);
+                macy.runOnImageLoad(() => {
+                    macy.recalculate(true, true);
+                }, true);
+
+                // Add popin events
+                addPopinEvents();
+
+                // Increase every time content is loaded
+                ++config.startPage;
+                
+                // Call again next pic in popin if loading pics was made from popin
+                if (loadFromPopin) nextPic();
+            }else if (request.status === 400){
+                // Start over at begining of pics in popin if loading pics was made from popin
+                if (loadFromPopin) nextPic(true);
             }
         };
 
@@ -11936,14 +11996,30 @@ const loadContent = () => {
         // HTML template for a post
         const postTemplate = post => {
             return `
-                <div id="pic-${post.id}" class="pic">
-                <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img" />
-                <!--<h3 class="post-title"><a href="${post.link}?utm_source=codepen&utm_medium=link" target="_blank">${post.title.rendered}</a></h3>-->
+                <div class="pic">
+                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link">
+                        <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img" />
+                        <p class="pic-text">${post.title.rendered}</p>
+                    </a>
                 </div>`;
         };
 
         loadPosts();
     };
+
+    // First load of pics
+    //loadPics();
+
+    // Add popin events
+    addPopinEvents();
+
+    // Popin events
+    popinClose.addEventListener('click', () => {
+        popin.classList.remove('on');
+    }, false);
+
+    popinNext.addEventListener('click', () => { nextPic(); }, false);
+    popinPrev.addEventListener('click', () => { prevPic(); }, false);
 
     // Where the magic happens
     // Checks if IntersectionObserver is supported
@@ -11957,16 +12033,12 @@ const loadContent = () => {
             });
         };
 
-        // Intersection Observer options
-        const options = {
-            threshold: 1.0 // Execute when button is 100% visible
-        };
-
-        let loadMoreObserver = new IntersectionObserver(loadMoreCallback, options);
+        let loadMoreObserver = new IntersectionObserver(loadMoreCallback, {
+            threshold: 0.1
+        });
+        
         loadMoreObserver.observe(btnLoadMore);
     }
-
-    loadPics();
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (loadContent);
@@ -13475,4 +13547,4 @@ module.exports = webpackAsyncContext;
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?b669aff7af7c9af9f1560af1dd91d6da
+//# sourceMappingURL=main.js.map?0a2c4bf00c8c6b5f3cb0241242b895f0

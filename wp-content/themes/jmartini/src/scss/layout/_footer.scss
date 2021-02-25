@@ -3,20 +3,38 @@
 .footer {
     width: 100%;
     padding: 15px 0 0;
-    position: relative;
+    //position: relative;
     margin: 10vh 0 0;
     align-self: flex-end;
     font-size: 1.1rem;
-    &:before {
-        content: '';
-        height: 4px;
-        position: absolute;
-        top: 0;
-        left: -20px;
-        right: -20px;
-        background: #000;
-    }
+    letter-spacing: 0;
+    opacity: 0.9;
+    // &:before {
+    //     content: '';
+    //     height: 4px;
+    //     position: absolute;
+    //     top: 0;
+    //     left: -20px;
+    //     right: -20px;
+    //     background: #000;
+    // }
     p {
         margin: 0 0 5px;
+    }
+    .menu {
+        padding: 0 0 15px;
+        position: relative;
+        margin: 0 0 15px;
+        font-size: 1.4rem;
+        &:after {
+            content: '';
+            width: 30px;
+            height: 1px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            background: $txt;
+            opacity: 0.7;
+        }
     }
 }

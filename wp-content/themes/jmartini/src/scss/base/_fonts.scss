@@ -1,19 +1,9 @@
-// @font-face {
-//     font-family: 'Barlow Condensed';
-//     src: local('Barlow Condensed'), url('../../fonts/barlowcondensed-regular-webfont.woff2') format('woff2'),
-//         url('../../fonts/barlowcondensed-regular-webfont.woff') format('woff');
-//     font-display: swap;
-//     font-style: normal;
-//     font-weight: 400;
-//     unicode-range: U+000-5FF; /* Latin glyphs */
-// }
-
-// @font-face {
-//     font-family: 'Raleway';
-//     src: local('Raleway'), url('../../fonts/raleway-variablefont_wght-webfont.woff2') format('woff2'),
-//         url('../../fonts/raleway-variablefont_wght-webfont.woff') format('woff');
-//     //font-display: swap;
-//     font-style: normal;
-//     font-weight: 500;
-//     //unicode-range: U+000-5FF; /* Latin glyphs */
-// }
+@font-face {
+    font-family: 'DINEngschrift';
+    src: local('DINEngschrift'), url('../../fonts/DINEngschrift.woff2') format('woff2'),
+        url('../../fonts/DINEngschrift.woff') format('woff');
+    font-display: swap;
+    font-style: normal;
+    font-weight: 400;
+    unicode-range: U+000-5FF; /* Latin glyphs */
+}

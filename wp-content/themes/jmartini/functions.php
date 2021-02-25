@@ -24,13 +24,24 @@ add_theme_support( 'post-thumbnails' );
 add_theme_support( 'title-tag' );
 
 // Admin bar
-show_admin_bar(false);
+//show_admin_bar(false);
 
 // Hide posts
 function jmartini_remove_admin_menus() {
     remove_menu_page( 'edit.php' );
 }
 add_action( 'admin_menu', 'jmartini_remove_admin_menus' );
+
+
+/*-----------------------------------------------------------------------------------*/
+/* RSS
+/*-----------------------------------------------------------------------------------*/
+function jmartini_feed( $qv ){
+    if( isset($qv['feed']) && !isset($qv['post_type']) )
+        $qv['post_type'] = array('photo');
+    return $qv;
+}
+add_filter('request', 'jmartini_feed');
 
 
 /*-----------------------------------------------------------------------------------*/

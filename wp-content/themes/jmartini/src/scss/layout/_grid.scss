@@ -1,12 +1,8 @@
 /* Grid */
 
-.wrapper {
-    overflow-x: hidden;
-}
-
 .sidebar {
     display: flex;
-    width: 250px;
+    width: 230px;
     height: 100vh;
     padding: 20px 20px 5px;
     flex-wrap: wrap;
@@ -14,13 +10,11 @@
     top: 0;
     left: 0;
     overflow-y: auto;
-    background: #fff;
 }
 
 .main {
     min-height: 100vh;
-    padding: 2px 2px 0 252px;
-    background: #000;
+    padding: 1px 1px 0 231px;
 }
 
 .container {

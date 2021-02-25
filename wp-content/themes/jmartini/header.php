@@ -6,10 +6,10 @@
 		<meta name='viewport' content='width=device-width,initial-scale=1'>
 		<meta name='format-detection' content='telephone=no'>
 
-		<link rel='alternate' type='application/rss+xml' title='<?php echo get_bloginfo('sitename') ?> Feed' href='<?php echo get_bloginfo('rss2_url') ?>'>
+		<link rel='alternate' type='application/rss+xml' title='<?php echo get_bloginfo('sitename') ?> Feed' href='<?php echo get_bloginfo('rss2_url') ?>?post_type=photo'>
 
 		<link rel="preconnect" href="https://fonts.gstatic.com">
-		<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed&family=Raleway:ital,wght@0,400;1,300&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;1,300&display=swap" rel="stylesheet">
 
 		<?php wp_head(); ?>
 
@@ -24,8 +24,9 @@
 				<header role='banner' class="header">
 
 					<h1>
-						<a href='./' title='J. Martini' rel='home'>J. Martini</a>
+						<a href='./' title='John Martini' rel='home'>john martini</a>
 					</h1>
+					<p class="subtitle">analog photography</p>
 
 					<?php dynamic_sidebar('sidebar'); ?>
 					
