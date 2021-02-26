@@ -11825,6 +11825,53 @@ const mixBlendModeSupport = () =>
 
 /***/ }),
 
+/***/ "./wp-content/themes/jmartini/src/js/components/animHeader.js":
+/*!********************************************************************!*\
+  !*** ./wp-content/themes/jmartini/src/js/components/animHeader.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
+const animHeader = () => {
+    const wWidth = window.innerWidth;
+    const header = document.getElementById('header');
+    const footer = document.getElementById('footer');
+
+    if (wWidth > 580 || !header || !footer) return;
+
+    let lastScrollPos = 0;
+    let tick = false;
+
+    const animInfos = () => {
+        if (window.scrollY > lastScrollPos){
+            header.classList.add('up');
+            footer.classList.add('down');
+        }else{
+            header.classList.remove('up');
+            footer.classList.remove('down');
+        }
+
+        lastScrollPos = window.scrollY;
+        tick = false;
+    };
+
+    window.addEventListener('scroll', () => {
+        if (tick) return;
+        
+        window.requestAnimationFrame(animInfos);
+        tick = true;
+    });
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (animHeader);
+
+
+/***/ }),
+
 /***/ "./wp-content/themes/jmartini/src/js/components/loadContent.js":
 /*!*********************************************************************!*\
   !*** ./wp-content/themes/jmartini/src/js/components/loadContent.js ***!
@@ -11846,17 +11893,14 @@ __webpack_require__.r(__webpack_exports__);
 // GitHub: https://github.com/castroalves
 
 const loadContent = () => {
-    // Basic Configuration
-    const config = {
-        api: window.location.origin + '/wp-json/wp/v2/photo',
-        startPage: 2,
-        postsPerPage: 9
-    };
+    let portfolio = document.querySelector('#portfolio');
+    let btnLoadMore = document.querySelector('#load-more');
+
+    if(!portfolio || !btnLoadMore) return;
 
     // Private Properties
     let postsLoaded = true;
-    let portfolio = document.querySelector('#portfolio');
-    let btnLoadMore = document.querySelector('#load-more');
+    let startPage = 2;
 
     // Macy layout
     const macy = macy__WEBPACK_IMPORTED_MODULE_0___default()({
@@ -11867,8 +11911,8 @@ const loadContent = () => {
         columns: 1,
         mobileFirst: true,
         breakAt: {
-            980: 3,
-            700: 2
+            1100: 3,
+            800: 2
         }
     });
 
@@ -11879,6 +11923,19 @@ const loadContent = () => {
     const popinNext = popin.querySelector('#popin-next');
     const popinPrev = popin.querySelector('#popin-prev');
     let currentPic;
+
+    // Builds the API URL with params _embed, per_page, and page
+    const getApiUrl = () => {
+        let apiUrl = new URL(window.location.origin + '/wp-json/wp/v2/photo');
+
+        apiUrl.search = new URLSearchParams({
+            _embed: true,
+            page: startPage,
+            per_page: 9
+        }).toString();
+
+        return apiUrl;
+    };
 
     // Pop the popin
     const loadPopin = link => {
@@ -11926,89 +11983,65 @@ const loadContent = () => {
         }
     };
 
-    // Private Methods
-    const loadPics = loadFromPopin => {
-        // Basic query parameters to filter the API
-        // Visit https://developer.wordpress.org/rest-api/reference/posts/#arguments
-        // For information about other parameters
-        const params = {
-            _embed: true, // Required to fetch images, author, etc
-            page: config.startPage, // Current page of the collection
-            per_page: config.postsPerPage // Maximum number of posts to be returned by the API
-        };
+    // Builds the HTML to show all posts
+    const renderPostHtml = posts => {
+        let postHtml = '';
 
-        // Builds the API URL with params _embed, per_page, and page
-        const getApiUrl = url => {
-            let apiUrl = new URL(url);
-            apiUrl.search = new URLSearchParams(params).toString();
-            return apiUrl;
-        };
+        for (let post of posts) {
+            postHtml += postTemplate(post);
+        }
 
-        // Make a request to the REST API
-        const loadPosts = async () => {
-            const url = getApiUrl(config.api);
-            const request = await fetch(url);
+        return postHtml;
+    };
 
-            if (request.status === 200) {
-                const posts = await request.json();
-
-                if (!posts.length) return;
-
-                // Builds the HTML to show the posts
-                const postsHtml = renderPostHtml(posts);
-
-                // Adds the HTML into the posts div
-                portfolio.innerHTML += postsHtml;
-
-                // Required for the infinite scroll
-                postsLoaded = true;
-
-                // Recalculate Macy layout
-                macy.runOnImageLoad(() => {
-                    //macy.recalculate(true, true);
-
-                    // Add popin events
-                    addPopinEvents();
-
-                    // Call again next pic in popin if loading pics was made from popin
-                    if (loadFromPopin) nextPic();
-                }, true);
-
-                // Increase every time content is loaded
-                ++config.startPage;
-            } else if (request.status === 400) {
-                // Start over at begining of pics in popin if loading pics was made from popin
-                if (loadFromPopin) nextPic(true);
-            }
-        };
-
-        // Builds the HTML to show all posts
-        const renderPostHtml = posts => {
-            let postHtml = '';
-
-            for (let post of posts) {
-                postHtml += postTemplate(post);
-            }
-
-            return postHtml;
-        };
-
-        // HTML template for a post
-        const postTemplate = post => {
-            return `
+    // HTML template for a post
+    const postTemplate = post => {
+        return `
                 <div class="pic">
                     <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link off">
                         <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img" />
                         <p class="pic-text">${post.title.rendered}</p>
                     </a>
                 </div>`;
-        };
-
-        loadPosts();
     };
 
-    // First load of pics
-    //loadPics();
+    // Make a request to the REST API
+    const loadPics = async (loadFromPopin) => {
+        const url = getApiUrl();
+        const request = await fetch(url);
+
+        if (request.status === 200) {
+            const posts = await request.json();
+
+            if (!posts.length) return;
+
+            // Builds the HTML to show the posts
+            const postsHtml = renderPostHtml(posts);
+
+            // Adds the HTML into the posts div
+            portfolio.innerHTML += postsHtml;
+
+            // Required for the infinite scroll
+            postsLoaded = true;
+
+            // Recalculate Macy layout
+            macy.runOnImageLoad(() => {
+                //macy.recalculate(true, true);
+
+                // Add popin events
+                addPopinEvents();
+
+                // Call again next pic in popin if loading pics was made from popin
+                if (loadFromPopin) nextPic();
+            }, true);
+
+            // Increase every time content is loaded
+            ++startPage;
+        } else if (request.status === 400) {
+            // Start over at begining of pics in popin if loading pics was made from popin
+            if (loadFromPopin) nextPic(true);
+        }
+    };
 
     // Add popin events
     addPopinEvents();
@@ -12063,6 +12096,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_polyfill__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_polyfill__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _stereorepo_sac__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @stereorepo/sac */ "./node_modules/@stereorepo/sac/src/index.js");
 /* harmony import */ var _components_loadContent__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/loadContent */ "./wp-content/themes/jmartini/src/js/components/loadContent.js");
+/* harmony import */ var _components_animHeader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/animHeader */ "./wp-content/themes/jmartini/src/js/components/animHeader.js");
 // ⚠️ Do not remove the line below or your scss won't work anymore
 
 
@@ -12085,6 +12119,7 @@ const dynamicLoading = ({ name }) => async () => {
 
 
 
+
 // Initialization functions
 const preloadCallback = () => {
     // All actions needed at page load
@@ -12097,6 +12132,7 @@ const loadCallback = () => {
 
 const animationsCallback = () => {
     // Animations shouldn't be render blocking... so they'll be called last
+    (0,_components_animHeader__WEBPACK_IMPORTED_MODULE_4__.default)();
 };
 
 // Init sac superComponents
@@ -13245,6 +13281,8 @@ try {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var map = {
+	"./animHeader": "./wp-content/themes/jmartini/src/js/components/animHeader.js",
+	"./animHeader.js": "./wp-content/themes/jmartini/src/js/components/animHeader.js",
 	"./loadContent": "./wp-content/themes/jmartini/src/js/components/loadContent.js",
 	"./loadContent.js": "./wp-content/themes/jmartini/src/js/components/loadContent.js"
 };
@@ -13551,4 +13589,4 @@ module.exports = webpackAsyncContext;
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?ffbcfa051b6d0ad19cf835bb2b25690d
+//# sourceMappingURL=main.js.map?0567531c5124bb2fcd623a38f4a1a976

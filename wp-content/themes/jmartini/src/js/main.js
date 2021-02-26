@@ -19,6 +19,7 @@ const dynamicLoading = ({ name }) => async () => {
 // ⚠️ DO NOT REMOVE ⚠️
 
 import loadContent from './components/loadContent';
+import animHeader from './components/animHeader';
 
 // Initialization functions
 const preloadCallback = () => {
@@ -32,6 +33,7 @@ const loadCallback = () => {
 
 const animationsCallback = () => {
     // Animations shouldn't be render blocking... so they'll be called last
+    animHeader();
 };
 
 // Init sac superComponents

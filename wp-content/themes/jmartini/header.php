@@ -21,7 +21,7 @@
 		<div class="wrapper">
 
 			<div class="sidebar">
-				<header role='banner' class="header">
+				<header role='banner' class="header" id="header">
 
 					<h1>
 						<a href='./' title='John Martini' rel='home'>john martini</a>
@@ -32,7 +32,7 @@
 					
 				</header>
 
-				<footer role='contentinfo' class="footer">
+				<footer role='contentinfo' class="footer" id="footer">
 					<?php dynamic_sidebar('footer'); ?>
 				</footer>
 			</div>

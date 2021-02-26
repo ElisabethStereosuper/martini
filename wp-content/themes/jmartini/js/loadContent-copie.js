@@ -1,5 +1,21 @@
-import Macy from 'macy';
-import { forEach } from '@stereorepo/sac';
+(self["webpackChunkjmartini"] = self["webpackChunkjmartini"] || []).push([["loadContent-copie"],{
+
+/***/ "./wp-content/themes/jmartini/src/js/components/loadContent copie.js":
+/*!***************************************************************************!*\
+  !*** ./wp-content/themes/jmartini/src/js/components/loadContent copie.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
+/* harmony import */ var macy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! macy */ "./node_modules/macy/dist/macy.js");
+/* harmony import */ var macy__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(macy__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _stereorepo_sac__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @stereorepo/sac */ "./node_modules/@stereorepo/sac/src/index.js");
+
+
 
 // Infinite load author: Cadu de Castro Alves
 // GitHub: https://github.com/castroalves
@@ -15,7 +31,7 @@ const loadContent = () => {
     let startPage = 2;
 
     // Macy layout
-    const macy = Macy({
+    const macy = macy__WEBPACK_IMPORTED_MODULE_0___default()({
         container: '#portfolio',
         trueOrder: false,
         waitForImages: true,
@@ -66,7 +82,7 @@ const loadContent = () => {
 
     // Popin events
     const addPopinEvents = () => {
-        forEach(document.getElementsByClassName('pic-link'), link => {
+        (0,_stereorepo_sac__WEBPACK_IMPORTED_MODULE_1__.forEach)(document.getElementsByClassName('pic-link'), link => {
             link.classList.remove('off');
             link.addEventListener('click', e => {
                 e.preventDefault();
@@ -190,4 +206,10 @@ const loadContent = () => {
     }
 };
 
-export default loadContent;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (loadContent);
+
+
+/***/ })
+
+}]);
+//# sourceMappingURL=loadContent-copie.js.map?cf2e5a22d3ac96ba2a7429089c066e84

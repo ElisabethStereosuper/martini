@@ -2,11 +2,16 @@
 
 .footer {
     width: 100%;
-    padding: 15px 0 0;
+    padding: 50px 0 0;
     align-self: flex-end;
     font-size: 1.1rem;
     letter-spacing: 0;
     opacity: 0.9;
+    transition: opacity 0.3s ease-in-out, 0.3s visibility 0s;
+    &.down {
+        opacity: 0;
+        visibility: hidden;
+    }
     p {
         margin: 0 0 5px;
     }

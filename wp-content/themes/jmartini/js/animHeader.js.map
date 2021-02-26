@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://jmartini/./wp-content/themes/jmartini/src/js/components/animHeader.js"],"names":[],"mappings":";;;;;;;;;;;;;AAAA;;AAEA;;AAEA,iEAAe,UAAU,EAAC","file":"animHeader.js","sourcesContent":["const animHeader = () => {\n    \n};\n\nexport default animHeader;\n"],"sourceRoot":""}
