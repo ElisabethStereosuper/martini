@@ -11,6 +11,10 @@
     left: 0;
     z-index: 100;
     overflow-y: auto;
+    pointer-events: none;
+    a {
+        pointer-events: auto;
+    }
 }
 
 .main {

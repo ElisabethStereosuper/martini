@@ -11,24 +11,6 @@
     max-width: 32%;
 }*/
 
-.portfolio {
-    &:hover {
-        .pic-link {
-            > img {
-                opacity: 0.7;
-            }
-        }
-    }
-    .pic-link {
-        &:hover,
-        &:focus {
-            > img {
-                opacity: 1;
-            }
-        }
-    }
-}
-
 .pic {
     padding: 1px;
     overflow: hidden;
@@ -39,12 +21,6 @@
     display: block;
     border: 0;
     position: relative;
-    &:hover,
-    &:focus {
-        .pic-text {
-            transform: translate3d(0, 0, 0);
-        }
-    }
     &.off {
         opacity: 0;
     }
@@ -113,8 +89,8 @@
     width: 50px;
     height: 50px;
     padding: 12px 14px 15px;
-    top: 10px;
-    right: 10px;
+    top: 0;
+    right: 0;
     z-index: 10;
     border-radius: 50%;
     background: #000;
@@ -132,53 +108,90 @@
     width: 50%;
     top: 0;
     bottom: 0;
-    &:hover,
-    &:focus {
-        &:after,
-        > svg {
-            transform: scale(1);
-        }
-    }
     &[disabled] {
         opacity: 0.4;
     }
     &:after,
     > svg {
         position: absolute;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        transition: 0.3s ease-in-out;
-        transform-origin: 50% 50%;
-        transform: scale(0);
     }
     &:after {
         content: '';
         width: 50px;
         height: 50px;
+        bottom: 0;
         border-radius: 50%;
         background: #000;
     }
     > svg {
         width: 24px;
+        bottom: 12px;
         z-index: 1;
     }
 }
 .popin-prev {
     left: 0;
     &:after {
-        left: 10px;
+        left: 0;
     }
     > svg {
-        left: 21px;
+        left: 11px;
     }
 }
 .popin-next {
     right: 0;
     &:after {
-        right: 10px;
+        right: 0;
     }
     > svg {
-        right: 21px;
+        right: 11px;
+    }
+}
+
+@media (min-width: $desktop-small) {
+    .portfolio {
+        &:hover {
+            .pic-link {
+                > img {
+                    opacity: 0.7;
+                }
+            }
+        }
+        .pic-link {
+            &:hover,
+            &:focus {
+                > img {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .pic-link {
+        &:hover,
+        &:focus {
+            .pic-text {
+                transform: translate3d(0, 0, 0);
+            }
+        }
+    }
+
+    .popin-nav {
+        &:hover,
+        &:focus {
+            &:after,
+            > svg {
+                transform: scale(1);
+            }
+        }
+        &:after,
+        > svg {
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            transition: 0.3s ease-in-out;
+            transform-origin: 50% 50%;
+            transform: scale(0);
+        }
     }
 }
