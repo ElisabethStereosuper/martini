@@ -13,9 +13,6 @@ add_filter( 'auto_update_plugin', '__return_true' );
 
 // Theme support
 add_theme_support( 'html5', array(
-    'comment-list',
-    'comment-form',
-    'search-form',
     'gallery',
     'caption',
     'widgets'
@@ -24,7 +21,7 @@ add_theme_support( 'post-thumbnails' );
 add_theme_support( 'title-tag' );
 
 // Admin bar
-//show_admin_bar(false);
+show_admin_bar(false);
 
 // Hide posts
 function jmartini_remove_admin_menus() {
@@ -99,10 +96,10 @@ function jmartini_imagelink_setup(){
 add_action( 'admin_init', 'jmartini_imagelink_setup' );
 
 // Add wrapper around iframe
-function jmartini_iframe_add_wrapper( $return, $data, $url ){
-    return "<div class='wrapper-video'>{$return}</div>";
-}
-add_filter( 'oembed_dataparse', 'jmartini_iframe_add_wrapper', 10, 3 );
+// function jmartini_iframe_add_wrapper( $return, $data, $url ){
+//     return "<div class='wrapper-video'>{$return}</div>";
+// }
+// add_filter( 'oembed_dataparse', 'jmartini_iframe_add_wrapper', 10, 3 );
 
 // Allow svg in media library
 function jmartini_mime_types($mimes){
@@ -127,16 +124,16 @@ function jmartini_right_now_custom_post() {
 add_action( 'dashboard_glance_items', 'jmartini_right_now_custom_post' );
 
 // Option page
-function jmartini_menu_order( $menu_ord ){  
-    if( !$menu_ord ) return true;  
+// function jmartini_menu_order( $menu_ord ){  
+//     if( !$menu_ord ) return true;  
     
-    $menu = 'acf-options';
-    $menu_ord = array_diff($menu_ord, array( $menu ));
-    array_splice( $menu_ord, 1, 0, array( $menu ) );
-    return $menu_ord;
-}  
-add_filter( 'custom_menu_order', 'jmartini_menu_order' );
-add_filter( 'menu_order', 'jmartini_menu_order' );
+//     $menu = 'acf-options';
+//     $menu_ord = array_diff($menu_ord, array( $menu ));
+//     array_splice( $menu_ord, 1, 0, array( $menu ) );
+//     return $menu_ord;
+// }  
+// add_filter( 'custom_menu_order', 'jmartini_menu_order' );
+// add_filter( 'menu_order', 'jmartini_menu_order' );
 
 
 /*-----------------------------------------------------------------------------------*/
@@ -145,10 +142,10 @@ add_filter( 'menu_order', 'jmartini_menu_order' );
 //register_nav_menus( array('primary' => 'Primary Menu') );
 
 // Cleanup WP Menu html
-function jmartini_css_attributes_filter($var){
-    return is_array($var) ? array_intersect($var, array('current-menu-item', 'current_page_parent')) : '';
-}
-add_filter( 'nav_menu_css_class', 'jmartini_css_attributes_filter' );
+// function jmartini_css_attributes_filter($var){
+//     return is_array($var) ? array_intersect($var, array('current-menu-item', 'current_page_parent')) : '';
+// }
+// add_filter( 'nav_menu_css_class', 'jmartini_css_attributes_filter' );
 
 
 /*-----------------------------------------------------------------------------------*/
@@ -245,13 +242,6 @@ add_action( 'wp_enqueue_scripts', 'jmartini_scripts' );
 /*-----------------------------------------------------------------------------------*/
 function jmartini_register_required_plugins(){
 	$plugins = array(
-        array(
-            'name'        => 'Advanced Custom Fields PRO',
-            'slug'        => 'advanced-custom-fields-pro',
-            'source'      => get_template_directory_uri() . '/plugins/advanced-custom-fields-pro.zip',
-            'required'    => true,
-            'force_activation' => false
-        ),
         array(
             'name'        => 'Clean Image Filenames',
             'slug'        => 'clean-image-filenames',
