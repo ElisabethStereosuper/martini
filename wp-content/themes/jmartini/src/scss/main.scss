@@ -1,17 +1,13 @@
 @charset 'utf-8';
 
-@import 'abstracts/variables', 'abstracts/animations', 'abstracts/functions', 'abstracts/mixins';
+@import 'abstracts/variables';
 
 @import 'base/reset', 'base/fonts', 'base/base';
 
 @import 'layout/grid';
 
-@import 'abstracts/placeholders';
+@import 'layout/header', 'layout/footer';
 
-@import 'components/buttons';
-
-@import 'layout/forms', 'layout/header', 'layout/footer';
-
-@import 'pages/home';
+@import 'pages/home', 'pages/404';
 
 @import 'base/print';

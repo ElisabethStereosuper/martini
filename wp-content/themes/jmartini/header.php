@@ -24,8 +24,6 @@
 
 	<body <?php body_class(); ?>>
 
-		<div class="wrapper">
-
 			<div class="sidebar">
 				<header role='banner' class="header" id="header">
 

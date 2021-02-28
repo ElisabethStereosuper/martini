@@ -159,7 +159,8 @@ const loadContent = () => {
     addPopinEvents();
 
     // Popin events
-    popinClose.addEventListener('click', () => {
+    popinClose.addEventListener('click', e => {
+        e.stopImmediatePropagation();
         popin.classList.remove('on');
     }, false);
 

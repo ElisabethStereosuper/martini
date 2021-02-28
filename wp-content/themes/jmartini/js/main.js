@@ -12047,7 +12047,8 @@ const loadContent = () => {
     addPopinEvents();
 
     // Popin events
-    popinClose.addEventListener('click', () => {
+    popinClose.addEventListener('click', e => {
+        e.stopImmediatePropagation();
         popin.classList.remove('on');
     }, false);
 
@@ -13589,4 +13590,4 @@ module.exports = webpackAsyncContext;
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?0567531c5124bb2fcd623a38f4a1a976
+//# sourceMappingURL=main.js.map?6e72f506016d68fb928654d237f7773b

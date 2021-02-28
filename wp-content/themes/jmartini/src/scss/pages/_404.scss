@@ -1,0 +1,57 @@
+.error404 {
+    .main {
+        text-align: center;
+    }
+}
+
+.e404-title {
+    margin: 0;
+    font-size: 25rem;
+    line-height: 1;
+}
+
+.e404-subtitle {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.e404-link {
+    margin-top: 3em;
+}
+
+@media (min-width: $phone) {
+    .error404 {
+        .main {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
+
+@media (max-width: $phone) {
+    .error404 {
+        position: relative;
+        padding: 0 0 170px;
+        .sidebar {
+            height: auto;
+            position: static;
+            margin: 0 0 100px;
+        }
+        .header {
+            &.up {
+                opacity: 1;
+                visibility: visible;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+        .footer {
+            width: auto;
+            position: absolute;
+            bottom: 0;
+            &.down {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+}
