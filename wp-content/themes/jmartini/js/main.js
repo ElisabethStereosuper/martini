@@ -12039,6 +12039,7 @@ const loadContent = () => {
         postsLoaded = false;
 
         loaderPics.classList.add('on');
+        portfolio.classList.add('off');
 
         const url = getApiUrl();
         const request = await fetch(url);
@@ -12084,6 +12085,7 @@ const loadContent = () => {
         }
 
         loaderPics.classList.remove('on');
+        portfolio.classList.remove('off');
     };
 
     // Add popin events
@@ -12096,10 +12098,12 @@ const loadContent = () => {
         popin.classList.remove('on');
     }, false);
 
-    popinNext.addEventListener('click', () => {
+    popinNext.addEventListener('click', e => {
+        e.target.blur();
         nextPic(false);
     }, false);
-    popinPrev.addEventListener('click', () => {
+    popinPrev.addEventListener('click', e => {
+        e.target.blur();
         prevPic(false);
     }, false);
 
@@ -13710,4 +13714,4 @@ module.exports = webpackAsyncContext;
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?2d7ba34b745ea0cc99c8d02c8b397339
+//# sourceMappingURL=main.js.map?a070e3d661ec94a79469560a0d2c1a4c

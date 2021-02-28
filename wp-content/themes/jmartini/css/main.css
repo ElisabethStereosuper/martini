@@ -337,7 +337,7 @@ a:active {
     pointer-events: auto; }
 .main {
   min-height: 100%;
-  padding: 1px 1px 70px 1px; }
+  padding: 1px; }
 .container {
   max-width: 1400px;
   padding: 0 35px;
@@ -395,6 +395,8 @@ a:active {
 .pic {
     max-width: 32%;
 }*/
+.portfolio.off .pic-link > img {
+  opacity: 0.7; }
 .pic {
   padding: 1px;
   overflow: hidden;
@@ -525,7 +527,7 @@ a:active {
 .loader-pics {
   position: fixed;
   top: auto;
-  bottom: 10px;
+  bottom: 20px;
   z-index: 200;
   border-color: #f2e6d5; }
 @-webkit-keyframes loading {
@@ -625,4 +627,4 @@ a:active {
     page-break-after: avoid; } }
 
 
-/*# sourceMappingURL=main.css.map?9253648e3330399535274cf9016e34ac*/
+/*# sourceMappingURL=main.css.map?5cffa58d606ec784a8434f0e13234487*/

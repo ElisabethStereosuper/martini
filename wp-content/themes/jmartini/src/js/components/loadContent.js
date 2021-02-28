@@ -150,6 +150,7 @@ const loadContent = () => {
         postsLoaded = false;
 
         loaderPics.classList.add('on');
+        portfolio.classList.add('off');
 
         const url = getApiUrl();
         const request = await fetch(url);
@@ -195,6 +196,7 @@ const loadContent = () => {
         }
 
         loaderPics.classList.remove('on');
+        portfolio.classList.remove('off');
     };
 
     // Add popin events
@@ -207,10 +209,12 @@ const loadContent = () => {
         popin.classList.remove('on');
     }, false);
 
-    popinNext.addEventListener('click', () => {
+    popinNext.addEventListener('click', e => {
+        e.target.blur();
         nextPic(false);
     }, false);
-    popinPrev.addEventListener('click', () => {
+    popinPrev.addEventListener('click', e => {
+        e.target.blur();
         prevPic(false);
     }, false);
 

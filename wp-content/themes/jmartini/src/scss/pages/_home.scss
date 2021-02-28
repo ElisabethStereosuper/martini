@@ -11,6 +11,16 @@
     max-width: 32%;
 }*/
 
+.portfolio {
+    &.off {
+        .pic-link {
+            > img {
+                opacity: 0.7;
+            }
+        }
+    }
+}
+
 .pic {
     padding: 1px;
     overflow: hidden;
@@ -177,7 +187,7 @@
 .loader-pics {
     position: fixed;
     top: auto;
-    bottom: 10px;
+    bottom: 20px;
     z-index: 200;
     border-color: $txt;
 }
