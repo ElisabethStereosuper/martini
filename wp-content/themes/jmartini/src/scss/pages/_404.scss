@@ -21,6 +21,9 @@
 
 @media (min-width: $phone) {
     .error404 {
+        .wrapper {
+            height: 100%;
+        }
         .main {
             display: flex;
             align-items: center;
@@ -30,8 +33,13 @@
 
 @media (max-width: $phone) {
     .error404 {
-        position: relative;
-        padding: 0 0 170px;
+        .wrapper {
+            position: relative;
+            padding: 0 0 170px;
+        }
+        .main {
+            min-height: 0;
+        }
         .sidebar {
             height: auto;
             position: static;

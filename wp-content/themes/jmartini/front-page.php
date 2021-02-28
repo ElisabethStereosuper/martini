@@ -24,6 +24,7 @@ if ( have_posts() ) : the_post();
 		</section>
 
 		<div id="load-more"></div>
+		<div id="loader-pics" class="loader loader-pics"></div>
 
 		<div id="popin" class="popin">
 			<button id="popin-close" class="popin-close" role="button">
@@ -42,6 +43,7 @@ if ( have_posts() ) : the_post();
 					<polygon points="315.869,21.178 294.621,0 91.566,203.718 294.621,407.436 315.869,386.258 133.924,203.718 "/>
 				</svg>
 			</button>
+			<div id="loader" class="loader"></div>
 		</div>
 	<?php endif;
 

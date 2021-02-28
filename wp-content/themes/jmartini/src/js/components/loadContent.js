@@ -1,5 +1,6 @@
 import Macy from 'macy';
 import { forEach } from '@stereorepo/sac';
+import loadImage from 'image-promise';
 
 // Infinite load author: Cadu de Castro Alves
 // GitHub: https://github.com/castroalves
@@ -13,6 +14,7 @@ const loadContent = () => {
     // Private Properties
     let postsLoaded = true;
     let startPage = 2;
+    const loaderPics = document.getElementById('loader-pics');
 
     // Macy layout
     const macy = Macy({
@@ -34,7 +36,9 @@ const loadContent = () => {
     const popinClose = popin.querySelector('#popin-close');
     const popinNext = popin.querySelector('#popin-next');
     const popinPrev = popin.querySelector('#popin-prev');
-    let currentPic;
+    const loader = popin.querySelector('#loader');
+    let currentPic = 0;
+    let imgLoading = false;
 
     // Builds the API URL with params _embed, per_page, and page
     const getApiUrl = () => {
@@ -49,19 +53,41 @@ const loadContent = () => {
         return apiUrl;
     };
 
-    // Pop the popin
-    const loadPopin = link => {
-        const img = document.createElement('img');
-        img.src = link.href;
-
-        popinContent.innerHTML = '';
+    // Display image in popin
+    const resolvePopin = (link, img) => {
         popinContent.appendChild(img);
+        loader.classList.remove('on');
 
+        currentPic === 0 ? popinPrev.setAttribute('disabled', true) : popinPrev.removeAttribute('disabled');
+        
+        imgLoading = false;
+    }
+
+    // Popin loader
+    const loadingPopin = () => {
+        document.documentElement.classList.add('no-scroll');
         popin.classList.add('on');
+        loader.classList.add('on');
+        popinContent.innerHTML = '';
+    };
+
+    // Load the popin
+    const loadPopin = async link => {
+        if(imgLoading) return;
+
+        const img = document.createElement('img');
+        imgLoading = true;
+        img.src = link.href;
 
         currentPic = Array.prototype.slice.call(portfolio.children).indexOf(link.parentNode);
 
-        currentPic === 0 ? popinPrev.setAttribute('disabled', true) : popinPrev.removeAttribute('disabled');
+        loadImage(img)
+            .then((img) => {
+                resolvePopin(link, img);
+            })
+            .catch(() => {
+                console.error('Image failed to load :(');
+            });
     };
 
     // Popin events
@@ -70,6 +96,7 @@ const loadContent = () => {
             link.classList.remove('off');
             link.addEventListener('click', e => {
                 e.preventDefault();
+                loadingPopin();
                 loadPopin(link);
             }, false);
         });
@@ -79,6 +106,8 @@ const loadContent = () => {
         const pics = document.getElementsByClassName('pic');
         const nextPic = lastPic ? pics[0] : pics[currentPic + 1];
 
+        loadingPopin();
+        
         if (nextPic) {
             loadPopin(nextPic.querySelector('.pic-link'));
         } else {
@@ -90,6 +119,8 @@ const loadContent = () => {
         const pics = document.getElementsByClassName('pic');
         const prevPic = pics[currentPic - 1];
 
+        loadingPopin();
+
         if (prevPic) {
             loadPopin(prevPic.querySelector('.pic-link'));
         }
@@ -100,25 +131,26 @@ const loadContent = () => {
         let postHtml = '';
 
         for (let post of posts) {
-            postHtml += postTemplate(post);
+            postHtml += `
+                <div class="pic">
+                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link off">
+                        <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img pic-new" />
+                        <p class="pic-text">${post.title.rendered}</p>
+                    </a>
+                </div>`;
         }
 
         return postHtml;
     };
 
-    // HTML template for a post
-    const postTemplate = post => {
-        return `
-                <div class="pic">
-                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link off">
-                        <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img" />
-                        <p class="pic-text">${post.title.rendered}</p>
-                    </a>
-                </div>`;
-    };
-
     // Make a request to the REST API
-    const loadPics = async (loadFromPopin) => {
+    const loadPics = async loadFromPopin => {
+        if(postsLoaded === false) return;
+
+        postsLoaded = false;
+
+        loaderPics.classList.add('on');
+
         const url = getApiUrl();
         const request = await fetch(url);
 
@@ -133,26 +165,36 @@ const loadContent = () => {
             // Adds the HTML into the posts div
             portfolio.innerHTML += postsHtml;
 
-            // Required for the infinite scroll
-            postsLoaded = true;
+            // Add popin events
+            addPopinEvents();
 
-            // Recalculate Macy layout
-            macy.runOnImageLoad(() => {
-                //macy.recalculate(true, true);
+            // Call again next pic in popin if loading pics was made from popin
+            loadImage(portfolio.querySelectorAll('.pic-new'))
+                .then(allImgs => {
+                    allImgs.map(img => img.classList.remove('pic-new'));
+                    
+                    if (loadFromPopin) nextPic(false);
 
-                // Add popin events
-                addPopinEvents();
+                    macy.recalculate(true, true);
 
-                // Call again next pic in popin if loading pics was made from popin
-                if (loadFromPopin) nextPic();
-            }, true);
+                    // Required for the infinite scroll
+                    postsLoaded = true;
 
-            // Increase every time content is loaded
-            ++startPage;
+                    // Increase every time content is loaded
+                    ++startPage;
+                })
+                .catch(err => {
+                    console.error('One or more images have failed to load :(');
+                    console.error(err.errored);
+                    console.info('But these loaded fine:');
+                    console.info(err.loaded);
+                });
         } else if (request.status === 400) {
             // Start over at begining of pics in popin if loading pics was made from popin
             if (loadFromPopin) nextPic(true);
         }
+
+        loaderPics.classList.remove('on');
     };
 
     // Add popin events
@@ -161,14 +203,15 @@ const loadContent = () => {
     // Popin events
     popinClose.addEventListener('click', e => {
         e.stopImmediatePropagation();
+        document.documentElement.classList.remove('no-scroll');
         popin.classList.remove('on');
     }, false);
 
     popinNext.addEventListener('click', () => {
-        nextPic();
+        nextPic(false);
     }, false);
     popinPrev.addEventListener('click', () => {
-        prevPic();
+        prevPic(false);
     }, false);
 
     // Where the magic happens
@@ -176,10 +219,7 @@ const loadContent = () => {
     if ('IntersectionObserver' in window) {
         const loadMoreCallback = (entries, observer) => {
             entries.forEach(btn => {
-                if (btn.isIntersecting && postsLoaded === true) {
-                    postsLoaded = false;
-                    loadPics();
-                }
+                if (btn.isIntersecting) loadPics();
             });
         };
 

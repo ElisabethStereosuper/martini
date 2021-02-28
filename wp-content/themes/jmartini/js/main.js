@@ -11886,6 +11886,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var macy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! macy */ "./node_modules/macy/dist/macy.js");
 /* harmony import */ var macy__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(macy__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _stereorepo_sac__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @stereorepo/sac */ "./node_modules/@stereorepo/sac/src/index.js");
+/* harmony import */ var image_promise__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! image-promise */ "./node_modules/image-promise/index.js");
+
 
 
 
@@ -11901,6 +11903,7 @@ const loadContent = () => {
     // Private Properties
     let postsLoaded = true;
     let startPage = 2;
+    const loaderPics = document.getElementById('loader-pics');
 
     // Macy layout
     const macy = macy__WEBPACK_IMPORTED_MODULE_0___default()({
@@ -11922,7 +11925,9 @@ const loadContent = () => {
     const popinClose = popin.querySelector('#popin-close');
     const popinNext = popin.querySelector('#popin-next');
     const popinPrev = popin.querySelector('#popin-prev');
-    let currentPic;
+    const loader = popin.querySelector('#loader');
+    let currentPic = 0;
+    let imgLoading = false;
 
     // Builds the API URL with params _embed, per_page, and page
     const getApiUrl = () => {
@@ -11937,19 +11942,41 @@ const loadContent = () => {
         return apiUrl;
     };
 
-    // Pop the popin
-    const loadPopin = link => {
-        const img = document.createElement('img');
-        img.src = link.href;
-
-        popinContent.innerHTML = '';
+    // Display image in popin
+    const resolvePopin = (link, img) => {
         popinContent.appendChild(img);
+        loader.classList.remove('on');
 
+        currentPic === 0 ? popinPrev.setAttribute('disabled', true) : popinPrev.removeAttribute('disabled');
+        
+        imgLoading = false;
+    }
+
+    // Popin loader
+    const loadingPopin = () => {
+        document.documentElement.classList.add('no-scroll');
         popin.classList.add('on');
+        loader.classList.add('on');
+        popinContent.innerHTML = '';
+    };
+
+    // Load the popin
+    const loadPopin = async link => {
+        if(imgLoading) return;
+
+        const img = document.createElement('img');
+        imgLoading = true;
+        img.src = link.href;
 
         currentPic = Array.prototype.slice.call(portfolio.children).indexOf(link.parentNode);
 
-        currentPic === 0 ? popinPrev.setAttribute('disabled', true) : popinPrev.removeAttribute('disabled');
+        (0,image_promise__WEBPACK_IMPORTED_MODULE_2__.default)(img)
+            .then((img) => {
+                resolvePopin(link, img);
+            })
+            .catch(() => {
+                console.error('Image failed to load :(');
+            });
     };
 
     // Popin events
@@ -11958,6 +11985,7 @@ const loadContent = () => {
             link.classList.remove('off');
             link.addEventListener('click', e => {
                 e.preventDefault();
+                loadingPopin();
                 loadPopin(link);
             }, false);
         });
@@ -11967,6 +11995,8 @@ const loadContent = () => {
         const pics = document.getElementsByClassName('pic');
         const nextPic = lastPic ? pics[0] : pics[currentPic + 1];
 
+        loadingPopin();
+        
         if (nextPic) {
             loadPopin(nextPic.querySelector('.pic-link'));
         } else {
@@ -11978,6 +12008,8 @@ const loadContent = () => {
         const pics = document.getElementsByClassName('pic');
         const prevPic = pics[currentPic - 1];
 
+        loadingPopin();
+
         if (prevPic) {
             loadPopin(prevPic.querySelector('.pic-link'));
         }
@@ -11988,25 +12020,26 @@ const loadContent = () => {
         let postHtml = '';
 
         for (let post of posts) {
-            postHtml += postTemplate(post);
+            postHtml += `
+                <div class="pic">
+                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link off">
+                        <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img pic-new" />
+                        <p class="pic-text">${post.title.rendered}</p>
+                    </a>
+                </div>`;
         }
 
         return postHtml;
     };
 
-    // HTML template for a post
-    const postTemplate = post => {
-        return `
-                <div class="pic">
-                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link off">
-                        <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img" />
-                        <p class="pic-text">${post.title.rendered}</p>
-                    </a>
-                </div>`;
-    };
-
     // Make a request to the REST API
-    const loadPics = async (loadFromPopin) => {
+    const loadPics = async loadFromPopin => {
+        if(postsLoaded === false) return;
+
+        postsLoaded = false;
+
+        loaderPics.classList.add('on');
+
         const url = getApiUrl();
         const request = await fetch(url);
 
@@ -12021,26 +12054,36 @@ const loadContent = () => {
             // Adds the HTML into the posts div
             portfolio.innerHTML += postsHtml;
 
-            // Required for the infinite scroll
-            postsLoaded = true;
+            // Add popin events
+            addPopinEvents();
 
-            // Recalculate Macy layout
-            macy.runOnImageLoad(() => {
-                //macy.recalculate(true, true);
+            // Call again next pic in popin if loading pics was made from popin
+            (0,image_promise__WEBPACK_IMPORTED_MODULE_2__.default)(portfolio.querySelectorAll('.pic-new'))
+                .then(allImgs => {
+                    allImgs.map(img => img.classList.remove('pic-new'));
+                    
+                    if (loadFromPopin) nextPic(false);
 
-                // Add popin events
-                addPopinEvents();
+                    macy.recalculate(true, true);
 
-                // Call again next pic in popin if loading pics was made from popin
-                if (loadFromPopin) nextPic();
-            }, true);
+                    // Required for the infinite scroll
+                    postsLoaded = true;
 
-            // Increase every time content is loaded
-            ++startPage;
+                    // Increase every time content is loaded
+                    ++startPage;
+                })
+                .catch(err => {
+                    console.error('One or more images have failed to load :(');
+                    console.error(err.errored);
+                    console.info('But these loaded fine:');
+                    console.info(err.loaded);
+                });
         } else if (request.status === 400) {
             // Start over at begining of pics in popin if loading pics was made from popin
             if (loadFromPopin) nextPic(true);
         }
+
+        loaderPics.classList.remove('on');
     };
 
     // Add popin events
@@ -12049,14 +12092,15 @@ const loadContent = () => {
     // Popin events
     popinClose.addEventListener('click', e => {
         e.stopImmediatePropagation();
+        document.documentElement.classList.remove('no-scroll');
         popin.classList.remove('on');
     }, false);
 
     popinNext.addEventListener('click', () => {
-        nextPic();
+        nextPic(false);
     }, false);
     popinPrev.addEventListener('click', () => {
-        prevPic();
+        prevPic(false);
     }, false);
 
     // Where the magic happens
@@ -12064,10 +12108,7 @@ const loadContent = () => {
     if ('IntersectionObserver' in window) {
         const loadMoreCallback = (entries, observer) => {
             entries.forEach(btn => {
-                if (btn.isIntersecting && postsLoaded === true) {
-                    postsLoaded = false;
-                    loadPics();
-                }
+                if (btn.isIntersecting) loadPics();
             });
         };
 
@@ -12489,6 +12530,85 @@ if (true) !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() { return exports; }).cal
 else {}
 
 })( typeof window !== 'undefined' ? window : this);
+
+
+/***/ }),
+
+/***/ "./node_modules/image-promise/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/image-promise/index.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
+function isArrayLike(input) {
+    return input.length !== undefined;
+}
+function loadSingleImage(image) {
+    var promise = new Promise(function (resolve, reject) {
+        if (image.naturalWidth) {
+            // If the browser can determine the naturalWidth the image is already loaded successfully
+            resolve(image);
+        }
+        else if (image.complete) {
+            // If the image is complete but the naturalWidth is 0px it is probably broken
+            reject(image);
+        }
+        else {
+            image.addEventListener('load', fulfill);
+            image.addEventListener('error', fulfill);
+        }
+        function fulfill() {
+            if (image.naturalWidth) {
+                resolve(image);
+            }
+            else {
+                reject(image);
+            }
+            image.removeEventListener('load', fulfill);
+            image.removeEventListener('error', fulfill);
+        }
+    });
+    return Object.assign(promise, { image: image });
+}
+function loadImages(input, attributes) {
+    if (attributes === void 0) { attributes = {}; }
+    if (input instanceof HTMLImageElement) {
+        return loadSingleImage(input);
+    }
+    if (typeof input === 'string') {
+        /* Create a <img> from a string */
+        var src = input;
+        var image_1 = new Image();
+        Object.keys(attributes).forEach(function (name) { return image_1.setAttribute(name, attributes[name]); });
+        image_1.src = src;
+        return loadSingleImage(image_1);
+    }
+    if (isArrayLike(input)) {
+        // Momentarily ignore errors
+        var reflect = function (img) { return loadImages(img, attributes).catch(function (error) { return error; }); };
+        var reflected = [].map.call(input, reflect);
+        var tsFix_1 = Promise.all(reflected).then(function (results) {
+            var loaded = results.filter(function (x) { return x.naturalWidth; });
+            if (loaded.length === results.length) {
+                return loaded;
+            }
+            return Promise.reject({
+                loaded: loaded,
+                errored: results.filter(function (x) { return !x.naturalWidth; })
+            });
+        });
+        // Variables named `tsFix` are only here because TypeScript hates Promise-returning functions.
+        return tsFix_1;
+    }
+    var tsFix = Promise.reject(new TypeError('input is not an image, a URL string, or an array of them.'));
+    return tsFix;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (loadImages);
 
 
 /***/ }),
@@ -13590,4 +13710,4 @@ module.exports = webpackAsyncContext;
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?6e72f506016d68fb928654d237f7773b
+//# sourceMappingURL=main.js.map?2d7ba34b745ea0cc99c8d02c8b397339

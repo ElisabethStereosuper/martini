@@ -19,6 +19,9 @@ body {
 
 html {
     font-size: 62.5%; /* sets the base font to 10px for easier math */
+    &.no-scroll {
+        overflow-y: hidden;
+    }
 }
 
 body {
@@ -123,7 +126,11 @@ svg {
 
 button,
 input {
+    border: 0;
     color: inherit;
+    &:focus {
+        outline: 0;
+    }
 }
 
 a {
