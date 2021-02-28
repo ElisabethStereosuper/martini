@@ -170,10 +170,11 @@ const loadContent = () => {
             loadImage(portfolio.querySelectorAll('.pic-new'))
                 .then(allImgs => {
                     allImgs.map(img => img.classList.remove('pic-new'));
-                    macy.recalculate(true, true);
                     
                     // Call again next pic in popin if loading pics was made from popin
                     if (loadFromPopin) nextPic(false);
+
+                    macy.recalculate(true, true);
 
                     // Required for the infinite scroll
                     postsLoaded = true;

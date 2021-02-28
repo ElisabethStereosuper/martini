@@ -11971,7 +11971,7 @@ const loadContent = () => {
         currentPic = Array.prototype.slice.call(portfolio.children).indexOf(link.parentNode);
 
         (0,image_promise__WEBPACK_IMPORTED_MODULE_2__.default)(img)
-            .then((img) => {
+            .then(img => {
                 resolvePopin(link, img);
             })
             .catch(() => {
@@ -12010,9 +12010,7 @@ const loadContent = () => {
 
         loadingPopin();
 
-        if (prevPic) {
-            loadPopin(prevPic.querySelector('.pic-link'));
-        }
+        if (prevPic) loadPopin(prevPic.querySelector('.pic-link'));
     };
 
     // Builds the HTML to show all posts
@@ -12058,11 +12056,11 @@ const loadContent = () => {
             // Add popin events
             addPopinEvents();
 
-            // Call again next pic in popin if loading pics was made from popin
             (0,image_promise__WEBPACK_IMPORTED_MODULE_2__.default)(portfolio.querySelectorAll('.pic-new'))
                 .then(allImgs => {
                     allImgs.map(img => img.classList.remove('pic-new'));
                     
+                    // Call again next pic in popin if loading pics was made from popin
                     if (loadFromPopin) nextPic(false);
 
                     macy.recalculate(true, true);
@@ -12074,10 +12072,8 @@ const loadContent = () => {
                     ++startPage;
                 })
                 .catch(err => {
-                    console.error('One or more images have failed to load :(');
-                    console.error(err.errored);
-                    console.info('But these loaded fine:');
-                    console.info(err.loaded);
+                    console.error('One or more images have failed to load :( ', err.errored);
+                    console.info('But these loaded fine: ', err.loaded);
                 });
         } else if (request.status === 400) {
             // Start over at begining of pics in popin if loading pics was made from popin
@@ -13714,4 +13710,4 @@ module.exports = webpackAsyncContext;
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?a070e3d661ec94a79469560a0d2c1a4c
+//# sourceMappingURL=main.js.map?f90d3a357403a475efe83622d6930bbc

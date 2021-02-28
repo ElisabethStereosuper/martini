@@ -401,6 +401,8 @@ a:active {
   padding: 1px;
   overflow: hidden;
   transition: 0.3s ease-in-out; }
+.pic-new {
+  opacity: 0; }
 .pic-link {
   display: block;
   border: 0;
@@ -627,4 +629,4 @@ a:active {
     page-break-after: avoid; } }
 
 
-/*# sourceMappingURL=main.css.map?5cffa58d606ec784a8434f0e13234487*/
+/*# sourceMappingURL=main.css.map?786a814aad5a5ed47b8c1da7a6ffe8fb*/
