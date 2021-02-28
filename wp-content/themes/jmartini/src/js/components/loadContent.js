@@ -82,7 +82,7 @@ const loadContent = () => {
         currentPic = Array.prototype.slice.call(portfolio.children).indexOf(link.parentNode);
 
         loadImage(img)
-            .then((img) => {
+            .then(img => {
                 resolvePopin(link, img);
             })
             .catch(() => {
@@ -121,9 +121,7 @@ const loadContent = () => {
 
         loadingPopin();
 
-        if (prevPic) {
-            loadPopin(prevPic.querySelector('.pic-link'));
-        }
+        if (prevPic) loadPopin(prevPic.querySelector('.pic-link'));
     };
 
     // Builds the HTML to show all posts
@@ -169,14 +167,13 @@ const loadContent = () => {
             // Add popin events
             addPopinEvents();
 
-            // Call again next pic in popin if loading pics was made from popin
             loadImage(portfolio.querySelectorAll('.pic-new'))
                 .then(allImgs => {
                     allImgs.map(img => img.classList.remove('pic-new'));
-                    
-                    if (loadFromPopin) nextPic(false);
-
                     macy.recalculate(true, true);
+                    
+                    // Call again next pic in popin if loading pics was made from popin
+                    if (loadFromPopin) nextPic(false);
 
                     // Required for the infinite scroll
                     postsLoaded = true;
@@ -185,10 +182,8 @@ const loadContent = () => {
                     ++startPage;
                 })
                 .catch(err => {
-                    console.error('One or more images have failed to load :(');
-                    console.error(err.errored);
-                    console.info('But these loaded fine:');
-                    console.info(err.loaded);
+                    console.error('One or more images have failed to load :( ', err.errored);
+                    console.info('But these loaded fine: ', err.loaded);
                 });
         } else if (request.status === 400) {
             // Start over at begining of pics in popin if loading pics was made from popin
