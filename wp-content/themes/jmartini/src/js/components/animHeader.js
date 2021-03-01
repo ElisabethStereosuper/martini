@@ -9,10 +9,10 @@ const animHeader = () => {
     let tick = false;
 
     const animInfos = () => {
-        if (window.scrollY > lastScrollPos){
+        if (window.scrollY > lastScrollPos) {
             header.classList.add('up');
             footer.classList.add('down');
-        }else{
+        } else {
             header.classList.remove('up');
             footer.classList.remove('down');
         }
@@ -23,7 +23,6 @@ const animHeader = () => {
 
     window.addEventListener('scroll', () => {
         if (tick) return;
-        
         window.requestAnimationFrame(animInfos);
         tick = true;
     });

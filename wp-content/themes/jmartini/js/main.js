@@ -11847,10 +11847,10 @@ const animHeader = () => {
     let tick = false;
 
     const animInfos = () => {
-        if (window.scrollY > lastScrollPos){
+        if (window.scrollY > lastScrollPos) {
             header.classList.add('up');
             footer.classList.add('down');
-        }else{
+        } else {
             header.classList.remove('up');
             footer.classList.remove('down');
         }
@@ -11861,7 +11861,6 @@ const animHeader = () => {
 
     window.addEventListener('scroll', () => {
         if (tick) return;
-        
         window.requestAnimationFrame(animInfos);
         tick = true;
     });
@@ -11898,7 +11897,7 @@ const loadContent = () => {
     let portfolio = document.querySelector('#portfolio');
     let btnLoadMore = document.querySelector('#load-more');
 
-    if(!portfolio || !btnLoadMore) return;
+    if (!portfolio || !btnLoadMore) return;
 
     // Private Properties
     let postsLoaded = true;
@@ -11948,9 +11947,8 @@ const loadContent = () => {
         loader.classList.remove('on');
 
         currentPic === 0 ? popinPrev.setAttribute('disabled', true) : popinPrev.removeAttribute('disabled');
-        
         imgLoading = false;
-    }
+    };
 
     // Popin loader
     const loadingPopin = () => {
@@ -11962,7 +11960,7 @@ const loadContent = () => {
 
     // Load the popin
     const loadPopin = async link => {
-        if(imgLoading) return;
+        if (imgLoading) return;
 
         const img = document.createElement('img');
         imgLoading = true;
@@ -11983,11 +11981,15 @@ const loadContent = () => {
     const addPopinEvents = () => {
         (0,_stereorepo_sac__WEBPACK_IMPORTED_MODULE_1__.forEach)(document.getElementsByClassName('pic-link'), link => {
             link.classList.remove('off');
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                loadingPopin();
-                loadPopin(link);
-            }, false);
+            link.addEventListener(
+                'click',
+                e => {
+                    e.preventDefault();
+                    loadingPopin();
+                    loadPopin(link);
+                },
+                false
+            );
         });
     };
 
@@ -11996,7 +11998,6 @@ const loadContent = () => {
         const nextPic = lastPic ? pics[0] : pics[currentPic + 1];
 
         loadingPopin();
-        
         if (nextPic) {
             loadPopin(nextPic.querySelector('.pic-link'));
         } else {
@@ -12032,7 +12033,7 @@ const loadContent = () => {
 
     // Make a request to the REST API
     const loadPics = async loadFromPopin => {
-        if(postsLoaded === false) return;
+        if (postsLoaded === false) return;
 
         postsLoaded = false;
 
@@ -12059,7 +12060,6 @@ const loadContent = () => {
             (0,image_promise__WEBPACK_IMPORTED_MODULE_2__.default)(portfolio.querySelectorAll('.pic-new'))
                 .then(allImgs => {
                     allImgs.map(img => img.classList.remove('pic-new'));
-                    
                     // Call again next pic in popin if loading pics was made from popin
                     if (loadFromPopin) nextPic(false);
 
@@ -12088,25 +12088,37 @@ const loadContent = () => {
     addPopinEvents();
 
     // Popin events
-    popinClose.addEventListener('click', e => {
-        e.stopImmediatePropagation();
-        document.documentElement.classList.remove('no-scroll');
-        popin.classList.remove('on');
-    }, false);
+    popinClose.addEventListener(
+        'click',
+        e => {
+            e.stopImmediatePropagation();
+            document.documentElement.classList.remove('no-scroll');
+            popin.classList.remove('on');
+        },
+        false
+    );
 
-    popinNext.addEventListener('click', e => {
-        e.target.blur();
-        nextPic(false);
-    }, false);
-    popinPrev.addEventListener('click', e => {
-        e.target.blur();
-        prevPic(false);
-    }, false);
+    popinNext.addEventListener(
+        'click',
+        e => {
+            e.target.blur();
+            nextPic(false);
+        },
+        false
+    );
+    popinPrev.addEventListener(
+        'click',
+        e => {
+            e.target.blur();
+            prevPic(false);
+        },
+        false
+    );
 
     // Where the magic happens
     // Checks if IntersectionObserver is supported
     if ('IntersectionObserver' in window) {
-        const loadMoreCallback = (entries, observer) => {
+        const loadMoreCallback = entries => {
             entries.forEach(btn => {
                 if (btn.isIntersecting) loadPics();
             });
@@ -12115,7 +12127,6 @@ const loadContent = () => {
         let loadMoreObserver = new IntersectionObserver(loadMoreCallback, {
             threshold: 0.1
         });
-        
         loadMoreObserver.observe(btnLoadMore);
     }
 };
@@ -12150,22 +12161,11 @@ __webpack_require__.r(__webpack_exports__);
 // SEE: https://github.com/stereosuper/stereorepo/tree/master/packages/sac
 
 
-// ⚠️ DO NOT REMOVE ⚠️
-// This function allow you to use dynamic imports with webpack
-const dynamicLoading = ({ name }) => async () => {
-    // Do not use multiple variables for the import path, otherwise the chunck name will be composed of all the variables (and not the last one)
-    const { default: defaultFunction } = await __webpack_require__("./wp-content/themes/jmartini/src/js/components lazy recursive ^\\.\\/.*$")(`./${name}`);
-    defaultFunction();
-};
-// ⚠️ DO NOT REMOVE ⚠️
-
 
 
 
 // Initialization functions
-const preloadCallback = () => {
-    // All actions needed at page load
-};
+//const preloadCallback = () => { };
 
 const loadCallback = () => {
     // All actions needed after page load (like click events for example)
@@ -12183,7 +12183,7 @@ const animationsCallback = () => {
 
 // Access superComponents
 window.$stereorepo.superLoad.initializeLoadingShit({
-    preloadCallback,
+    //preloadCallback,
     loadCallback,
     animationsCallback,
     noTransElementsClass: '.elt-no-resize-transition'
@@ -13393,37 +13393,6 @@ try {
 }
 
 
-/***/ }),
-
-/***/ "./wp-content/themes/jmartini/src/js/components lazy recursive ^\\.\\/.*$":
-/*!***********************************************************************************************************!*\
-  !*** ./wp-content/themes/jmartini/src/js/components/ lazy ^\.\/.*$ chunkName: [request] namespace object ***!
-  \***********************************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var map = {
-	"./animHeader": "./wp-content/themes/jmartini/src/js/components/animHeader.js",
-	"./animHeader.js": "./wp-content/themes/jmartini/src/js/components/animHeader.js",
-	"./loadContent": "./wp-content/themes/jmartini/src/js/components/loadContent.js",
-	"./loadContent.js": "./wp-content/themes/jmartini/src/js/components/loadContent.js"
-};
-
-function webpackAsyncContext(req) {
-	return Promise.resolve().then(() => {
-		if(!__webpack_require__.o(map, req)) {
-			var e = new Error("Cannot find module '" + req + "'");
-			e.code = 'MODULE_NOT_FOUND';
-			throw e;
-		}
-
-		var id = map[req];
-		return __webpack_require__(id);
-	});
-}
-webpackAsyncContext.keys = () => Object.keys(map);
-webpackAsyncContext.id = "./wp-content/themes/jmartini/src/js/components lazy recursive ^\\.\\/.*$";
-module.exports = webpackAsyncContext;
-
 /***/ })
 
 /******/ 	});
@@ -13710,4 +13679,4 @@ module.exports = webpackAsyncContext;
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?f90d3a357403a475efe83622d6930bbc
+//# sourceMappingURL=main.js.map?2f20d756dc760caeb612fb8775f9eab3

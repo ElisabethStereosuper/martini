@@ -9,7 +9,7 @@ const loadContent = () => {
     let portfolio = document.querySelector('#portfolio');
     let btnLoadMore = document.querySelector('#load-more');
 
-    if(!portfolio || !btnLoadMore) return;
+    if (!portfolio || !btnLoadMore) return;
 
     // Private Properties
     let postsLoaded = true;
@@ -59,9 +59,8 @@ const loadContent = () => {
         loader.classList.remove('on');
 
         currentPic === 0 ? popinPrev.setAttribute('disabled', true) : popinPrev.removeAttribute('disabled');
-        
         imgLoading = false;
-    }
+    };
 
     // Popin loader
     const loadingPopin = () => {
@@ -73,7 +72,7 @@ const loadContent = () => {
 
     // Load the popin
     const loadPopin = async link => {
-        if(imgLoading) return;
+        if (imgLoading) return;
 
         const img = document.createElement('img');
         imgLoading = true;
@@ -94,11 +93,15 @@ const loadContent = () => {
     const addPopinEvents = () => {
         forEach(document.getElementsByClassName('pic-link'), link => {
             link.classList.remove('off');
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                loadingPopin();
-                loadPopin(link);
-            }, false);
+            link.addEventListener(
+                'click',
+                e => {
+                    e.preventDefault();
+                    loadingPopin();
+                    loadPopin(link);
+                },
+                false
+            );
         });
     };
 
@@ -107,7 +110,6 @@ const loadContent = () => {
         const nextPic = lastPic ? pics[0] : pics[currentPic + 1];
 
         loadingPopin();
-        
         if (nextPic) {
             loadPopin(nextPic.querySelector('.pic-link'));
         } else {
@@ -143,7 +145,7 @@ const loadContent = () => {
 
     // Make a request to the REST API
     const loadPics = async loadFromPopin => {
-        if(postsLoaded === false) return;
+        if (postsLoaded === false) return;
 
         postsLoaded = false;
 
@@ -170,7 +172,6 @@ const loadContent = () => {
             loadImage(portfolio.querySelectorAll('.pic-new'))
                 .then(allImgs => {
                     allImgs.map(img => img.classList.remove('pic-new'));
-                    
                     // Call again next pic in popin if loading pics was made from popin
                     if (loadFromPopin) nextPic(false);
 
@@ -199,25 +200,37 @@ const loadContent = () => {
     addPopinEvents();
 
     // Popin events
-    popinClose.addEventListener('click', e => {
-        e.stopImmediatePropagation();
-        document.documentElement.classList.remove('no-scroll');
-        popin.classList.remove('on');
-    }, false);
+    popinClose.addEventListener(
+        'click',
+        e => {
+            e.stopImmediatePropagation();
+            document.documentElement.classList.remove('no-scroll');
+            popin.classList.remove('on');
+        },
+        false
+    );
 
-    popinNext.addEventListener('click', e => {
-        e.target.blur();
-        nextPic(false);
-    }, false);
-    popinPrev.addEventListener('click', e => {
-        e.target.blur();
-        prevPic(false);
-    }, false);
+    popinNext.addEventListener(
+        'click',
+        e => {
+            e.target.blur();
+            nextPic(false);
+        },
+        false
+    );
+    popinPrev.addEventListener(
+        'click',
+        e => {
+            e.target.blur();
+            prevPic(false);
+        },
+        false
+    );
 
     // Where the magic happens
     // Checks if IntersectionObserver is supported
     if ('IntersectionObserver' in window) {
-        const loadMoreCallback = (entries, observer) => {
+        const loadMoreCallback = entries => {
             entries.forEach(btn => {
                 if (btn.isIntersecting) loadPics();
             });
@@ -226,7 +239,6 @@ const loadContent = () => {
         let loadMoreObserver = new IntersectionObserver(loadMoreCallback, {
             threshold: 0.1
         });
-        
         loadMoreObserver.observe(btnLoadMore);
     }
 };

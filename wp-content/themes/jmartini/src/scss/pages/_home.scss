@@ -110,8 +110,8 @@
     background: #000;
     transition: 0.3s ease-in-out;
     transform-origin: 50% 50%;
-    &:focus {
-        transform: scale(1.05);
+    &:active {
+        transform: scale(1.1);
         > svg {
             transform: scale(0.85);
         }
@@ -121,10 +121,10 @@
     width: 50%;
     top: 0;
     bottom: 0;
-    &:focus {
+    &:active {
         &:after,
         > svg {
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
     }
     &[disabled] {
@@ -242,7 +242,8 @@
     }
 
     .popin-close {
-        &:hover {
+        &:hover,
+        &:focus {
             transform: scale(1.05);
             > svg {
                 transform: scale(0.85);
