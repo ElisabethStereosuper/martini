@@ -5,23 +5,9 @@ Template Name: Home
 
 get_header(); 
 
-if ( have_posts() ) : the_post(); 
+if ( have_posts() ) : the_post(); ?>
 		
-	$photosQuery = new WP_Query( array('post_type' => 'photo', 'orderby' => 'menu_order') );
-
-	if( $photosQuery->have_posts() ) : ?>
-		<section class="portfolio" id="portfolio">
-			
-			<?php while( $photosQuery->have_posts() ) : $photosQuery->the_post(); ?>
-				<div class="pic">
-					<a href="<?php echo get_the_post_thumbnail_url($post, 'full') ?>" class="pic-link off">
-						<?php the_post_thumbnail('large'); ?>
-						<p class="pic-text"><?php the_title(); ?></p>
-					</a>
-				</div>
-			<?php endwhile; ?>
-
-		</section>
+		<section class="portfolio" id="portfolio"></section>
 
 		<div id="load-more"></div>
 		<div id="loader-pics" class="loader loader-pics"></div>
@@ -45,9 +31,8 @@ if ( have_posts() ) : the_post();
 			</button>
 			<div id="loader" class="loader"></div>
 		</div>
-	<?php endif;
 
-endif; 
+<?php endif; 
 
 get_footer();
 

@@ -219,6 +219,36 @@ function jmartini_taxonomies(){
     ) );
 }
 add_action( 'init', 'jmartini_taxonomies' );
+ 
+function jmartini_posts_columns($defaults){
+    $defaults['featured_image'] = __('Photos');
+    return $defaults;
+}
+ 
+function jmartini_posts_custom_columns($column_name, $id){
+    if($column_name === 'featured_image'){
+        echo the_post_thumbnail( [60, 60] );
+    }
+}
+add_filter('manage_posts_columns', 'jmartini_posts_columns', 5);
+add_action('manage_posts_custom_column', 'jmartini_posts_custom_columns', 5, 2);
+
+function jmartini_featured_media_json( $data, $post, $context ) {
+    $featured_image_id = $data->data['featured_media']; // get featured image id
+    $featured_image_url = wp_get_attachment_image_src( $featured_image_id, 'original' );
+    $featured_image_large_url = wp_get_attachment_image_src( $featured_image_id, 'large' );
+
+    if( $featured_image_url ) {
+        $data->data['featured_media_url'] = $featured_image_url[0];
+    }
+
+    if( $featured_image_large_url ) {
+        $data->data['featured_media_large_url'] = $featured_image_large_url[0];
+    }
+
+    return $data;
+}
+add_filter( 'rest_prepare_photo', 'jmartini_featured_media_json', 10, 3 );
 
 
 /*-----------------------------------------------------------------------------------*/

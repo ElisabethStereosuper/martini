@@ -13,17 +13,18 @@ const loadContent = () => {
 
     // Private Properties
     let postsLoaded = true;
-    let startPage = 2;
+    let startPage = 1;
     const loaderPics = document.getElementById('loader-pics');
 
     // Macy layout
     const macy = Macy({
         container: '#portfolio',
         trueOrder: false,
-        waitForImages: true,
+        waitForImages: false,
         margin: 0,
         columns: 1,
         mobileFirst: true,
+        useImageLoader: false,
         breakAt: {
             1100: 3,
             800: 2
@@ -45,9 +46,10 @@ const loadContent = () => {
         let apiUrl = new URL(window.location.origin + '/wp-json/wp/v2/photo');
 
         apiUrl.search = new URLSearchParams({
-            _embed: true,
+            //_embed: true,
             page: startPage,
-            per_page: 9
+            per_page: 9,
+            sort_column: 'menu_order'
         }).toString();
 
         return apiUrl;
@@ -81,18 +83,13 @@ const loadContent = () => {
         currentPic = Array.prototype.slice.call(portfolio.children).indexOf(link.parentNode);
 
         loadImage(img)
-            .then(img => {
-                resolvePopin(link, img);
-            })
-            .catch(() => {
-                console.error('Image failed to load :(');
-            });
+            .then(img => resolvePopin(link, img))
+            .catch(() => console.error('Image failed to load :('));
     };
 
     // Popin events
     const addPopinEvents = () => {
         forEach(document.getElementsByClassName('pic-link'), link => {
-            link.classList.remove('off');
             link.addEventListener(
                 'click',
                 e => {
@@ -133,9 +130,8 @@ const loadContent = () => {
         for (let post of posts) {
             postHtml += `
                 <div class="pic">
-                    <a href="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-link off">
-                        <img src="${post._embedded['wp:featuredmedia'][0].source_url}" class="pic-img pic-new" />
-                        <p class="pic-text">${post.title.rendered}</p>
+                    <a href="${post.featured_media_url}" class="pic-link off">
+                        <img src="${post.featured_media_large_url}" class="pic-img pic-new" />
                     </a>
                 </div>`;
         }
@@ -145,7 +141,7 @@ const loadContent = () => {
 
     // Make a request to the REST API
     const loadPics = async loadFromPopin => {
-        if (postsLoaded === false) return;
+        if (!postsLoaded) return;
 
         postsLoaded = false;
 
@@ -166,16 +162,22 @@ const loadContent = () => {
             // Adds the HTML into the posts div
             portfolio.innerHTML += postsHtml;
 
-            // Add popin events
-            addPopinEvents();
+            const imgs = portfolio.querySelectorAll('.pic-new');
 
-            loadImage(portfolio.querySelectorAll('.pic-new'))
+            loadImage(imgs)
                 .then(allImgs => {
-                    allImgs.map(img => img.classList.remove('pic-new'));
+                    macy.recalculate(true, true);
+
+                    allImgs.map(img => {
+                        img.classList.remove('pic-new');
+                        img.parentNode.classList.remove('off');
+                    });
+
                     // Call again next pic in popin if loading pics was made from popin
                     if (loadFromPopin) nextPic(false);
 
-                    macy.recalculate(true, true);
+                    // Add popin events
+                    addPopinEvents();
 
                     // Required for the infinite scroll
                     postsLoaded = true;
@@ -196,9 +198,6 @@ const loadContent = () => {
         portfolio.classList.remove('off');
     };
 
-    // Add popin events
-    addPopinEvents();
-
     // Popin events
     popinClose.addEventListener(
         'click',
@@ -206,6 +205,7 @@ const loadContent = () => {
             e.stopImmediatePropagation();
             document.documentElement.classList.remove('no-scroll');
             popin.classList.remove('on');
+            macy.recalculate(true, true);
         },
         false
     );
@@ -241,6 +241,9 @@ const loadContent = () => {
         });
         loadMoreObserver.observe(btnLoadMore);
     }
+
+    // First load
+    loadPics();
 };
 
 export default loadContent;

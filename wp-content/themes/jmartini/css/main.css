@@ -323,7 +323,7 @@ a:active {
 /* Grid */
 .sidebar {
   display: flex;
-  width: 230px;
+  width: 210px;
   height: 100%;
   padding: 20px 20px 5px;
   flex-wrap: wrap;
@@ -344,7 +344,7 @@ a:active {
   margin: 0 auto; }
 @media (min-width: 580px) {
   .main {
-    padding-left: 231px; } }
+    padding-left: 211px; } }
 /* Header */
 .header {
   width: 100%;
@@ -400,7 +400,7 @@ a:active {
 .pic {
   padding: 1px;
   overflow: hidden;
-  transition: 0.3s ease-in-out; }
+  transition: opacity 0.3s ease-in-out; }
 .pic-new {
   opacity: 0; }
 .pic-link {
@@ -408,26 +408,11 @@ a:active {
   border: 0;
   position: relative; }
 .pic-link.off {
-    opacity: 0; }
+    opacity: 0;
+    pointer-events: none; }
 .pic-link > img {
-    transition: 0.3s ease-in-out; }
-.pic-text {
-  display: block;
-  padding: 5px 7px 2px 20px;
-  position: absolute;
-  left: -1px;
-  right: -1px;
-  bottom: 0;
-  margin: 0;
-  font-family: "DINEngschrift", "Raleway", sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 0.02em;
-  text-align: center;
-  text-transform: lowercase;
-  background: #000;
-  transform: translate3d(0, 100%, 0);
-  transition: 0.2s ease-in-out;
-  will-change: transform; }
+    width: 100%;
+    transition: opacity 0.3s ease-in-out; }
 .popin {
   display: none;
   position: fixed;
@@ -554,8 +539,6 @@ a:active {
     opacity: 0.7; }
   .portfolio .pic-link:hover > img, .portfolio .pic-link:focus > img {
     opacity: 1; }
-  .pic-link:hover .pic-text, .pic-link:focus .pic-text {
-    transform: translate3d(0, 0, 0); }
   .popin-close:hover, .popin-close:focus {
     transform: scale(1.05); }
     .popin-close:hover > svg, .popin-close:focus > svg {
@@ -629,4 +612,4 @@ a:active {
     page-break-after: avoid; } }
 
 
-/*# sourceMappingURL=main.css.map?6bdc3a6d7477e083efa6154e35fd5052*/
+/*# sourceMappingURL=main.css.map?991faaaa0adb2ed9b9fa9f2dabe0a20e*/
