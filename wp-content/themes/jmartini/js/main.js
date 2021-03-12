@@ -11837,32 +11837,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ });
 const animHeader = () => {
-    const wWidth = window.innerWidth;
     const header = document.getElementById('header');
     const footer = document.getElementById('footer');
 
-    if (wWidth > 580 || !header || !footer) return;
+    if (!header || !footer) return;
 
+    let wWidth = window.innerWidth;
     let lastScrollPos = 0;
     let tick = false;
+    let tickResize = false;
 
     const animInfos = () => {
-        if (window.scrollY > lastScrollPos) {
-            header.classList.add('up');
-            footer.classList.add('down');
-        } else {
+        if (wWidth < 580){
+            if (window.scrollY > lastScrollPos) {
+                header.classList.add('up');
+                footer.classList.add('down');
+            } else {
+                header.classList.remove('up');
+                footer.classList.remove('down');
+            }
+        }else{
             header.classList.remove('up');
             footer.classList.remove('down');
         }
 
         lastScrollPos = window.scrollY;
         tick = false;
+        tickResize = false;
     };
 
     window.addEventListener('scroll', () => {
         if (tick) return;
         window.requestAnimationFrame(animInfos);
         tick = true;
+    });
+
+    window.addEventListener('resize', () => {
+        if (tickResize) return;
+        window.requestAnimationFrame(() => {
+            wWidth = window.innerWidth;
+            animInfos();
+        });
+        tickResize = true;
     });
 };
 
@@ -11899,33 +11915,19 @@ const loadContent = () => {
 
     if (!portfolio || !btnLoadMore) return;
 
-    // Private Properties
+    const loaderPics = document.getElementById('loader-pics');
     let postsLoaded = true;
     let startPage = 1;
-    const loaderPics = document.getElementById('loader-pics');
-
+    let wWidth = window.innerWidth;
+    let nbPosts = wWidth >= 580 ? 9 : 2;
+    let tick = false;
+    
     // Macy layout
-    const macy = macy__WEBPACK_IMPORTED_MODULE_0___default()({
-        container: '#portfolio',
-        trueOrder: false,
-        waitForImages: false,
-        margin: 0,
-        columns: 1,
-        mobileFirst: true,
-        useImageLoader: false,
-        breakAt: {
-            1100: 3,
-            800: 2
-        }
-    });
+    let macy = false;
 
     // Popin
-    const popin = document.getElementById('popin');
-    const popinContent = popin.querySelector('#popin-content');
-    const popinClose = popin.querySelector('#popin-close');
-    const popinNext = popin.querySelector('#popin-next');
-    const popinPrev = popin.querySelector('#popin-prev');
-    const loader = popin.querySelector('#loader');
+    let popinEventsAdded = false;
+    let popin, popinContent, popinClose, popinNext, popinPrev, loader;
     let currentPic = 0;
     let imgLoading = false;
 
@@ -11936,7 +11938,7 @@ const loadContent = () => {
         apiUrl.search = new URLSearchParams({
             //_embed: true,
             page: startPage,
-            per_page: 9,
+            per_page: nbPosts,
             sort_column: 'menu_order'
         }).toString();
 
@@ -11982,6 +11984,8 @@ const loadContent = () => {
                 'click',
                 e => {
                     e.preventDefault();
+
+                    if (wWidth < 580) return;
                     loadingPopin();
                     loadPopin(link);
                 },
@@ -12054,7 +12058,7 @@ const loadContent = () => {
 
             (0,image_promise__WEBPACK_IMPORTED_MODULE_2__.default)(imgs)
                 .then(allImgs => {
-                    macy.recalculate(true, true);
+                    if(macy) macy.recalculate();
 
                     allImgs.map(img => {
                         img.classList.remove('pic-new');
@@ -12072,6 +12076,9 @@ const loadContent = () => {
 
                     // Increase every time content is loaded
                     ++startPage;
+
+                    loaderPics.classList.remove('on');
+                    portfolio.classList.remove('off');
                 })
                 .catch(err => {
                     console.error('One or more images have failed to load :( ', err.errored);
@@ -12080,40 +12087,80 @@ const loadContent = () => {
         } else if (request.status === 400) {
             // Start over at begining of pics in popin if loading pics was made from popin
             if (loadFromPopin) nextPic(true);
-        }
 
-        loaderPics.classList.remove('on');
-        portfolio.classList.remove('off');
+            loaderPics.classList.remove('on');
+            portfolio.classList.remove('off');
+        }
     };
 
-    // Popin events
-    popinClose.addEventListener(
-        'click',
-        e => {
-            e.stopImmediatePropagation();
-            document.documentElement.classList.remove('no-scroll');
-            popin.classList.remove('on');
-            macy.recalculate(true, true);
-        },
-        false
-    );
+    const handlePopin = () => {
+        popin = document.getElementById('popin');
+        popinContent = popin.querySelector('#popin-content');
+        popinClose = popin.querySelector('#popin-close');
+        popinNext = popin.querySelector('#popin-next');
+        popinPrev = popin.querySelector('#popin-prev');
+        loader = popin.querySelector('#loader');
+        currentPic = 0;
+        imgLoading = false;
 
-    popinNext.addEventListener(
-        'click',
-        e => {
-            e.target.blur();
-            nextPic(false);
-        },
-        false
-    );
-    popinPrev.addEventListener(
-        'click',
-        e => {
-            e.target.blur();
-            prevPic(false);
-        },
-        false
-    );
+        popinClose.addEventListener(
+            'click',
+            e => {
+                e.stopImmediatePropagation();
+                document.documentElement.classList.remove('no-scroll');
+                popin.classList.remove('on');
+                if(macy) macy.recalculate();
+            },
+            false
+        );
+
+        popinNext.addEventListener(
+            'click',
+            e => {
+                e.target.blur();
+                nextPic(false);
+            },
+            false
+        );
+        popinPrev.addEventListener(
+            'click',
+            e => {
+                e.target.blur();
+                prevPic(false);
+            },
+            false
+        );
+
+        popinEventsAdded = true;
+    };
+
+    // Desktop layout
+    const launchDesktopLayout = () => {
+        if(!macy){
+            macy = macy__WEBPACK_IMPORTED_MODULE_0___default()({
+                container: '#portfolio',
+                waitForImages: false,
+                useOwnImageLoader: true,
+                columns: 1,
+                margin: 0,
+                mobileFirst: true,
+                useImageLoader: false,
+                breakAt: {
+                    1100: 3,
+                    800: 2
+                }
+            });
+        }
+
+        if (!popinEventsAdded){
+            handlePopin();
+        }
+    }
+    
+    if (wWidth >= 580) launchDesktopLayout();
+
+    // First load
+    loadPics();
 
     // Where the magic happens
     // Checks if IntersectionObserver is supported
@@ -12130,8 +12177,16 @@ const loadContent = () => {
         loadMoreObserver.observe(btnLoadMore);
     }
 
-    // First load
-    loadPics();
+    // Resize
+    window.addEventListener('resize', () => {
+        if (tick) return;
+        window.requestAnimationFrame(() => {
+            wWidth = window.innerWidth;
+            if (wWidth >= 580) launchDesktopLayout();
+            tick = false;
+        });
+        tick = true;
+    });
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (loadContent);
@@ -13682,4 +13737,4 @@ try {
 /******/ 	// This entry module used 'exports' so it can't be inlined
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map?9fbc825b452d109ddce2a3b918dd7c51
+//# sourceMappingURL=main.js.map?f05c2d36977e815f2a8c05cd81fb9b45

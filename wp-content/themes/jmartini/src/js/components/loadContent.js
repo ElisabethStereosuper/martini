@@ -11,33 +11,19 @@ const loadContent = () => {
 
     if (!portfolio || !btnLoadMore) return;
 
-    // Private Properties
+    const loaderPics = document.getElementById('loader-pics');
     let postsLoaded = true;
     let startPage = 1;
-    const loaderPics = document.getElementById('loader-pics');
-
+    let wWidth = window.innerWidth;
+    let nbPosts = wWidth >= 580 ? 9 : 2;
+    let tick = false;
+    
     // Macy layout
-    const macy = Macy({
-        container: '#portfolio',
-        trueOrder: false,
-        waitForImages: false,
-        margin: 0,
-        columns: 1,
-        mobileFirst: true,
-        useImageLoader: false,
-        breakAt: {
-            1100: 3,
-            800: 2
-        }
-    });
+    let macy = false;
 
     // Popin
-    const popin = document.getElementById('popin');
-    const popinContent = popin.querySelector('#popin-content');
-    const popinClose = popin.querySelector('#popin-close');
-    const popinNext = popin.querySelector('#popin-next');
-    const popinPrev = popin.querySelector('#popin-prev');
-    const loader = popin.querySelector('#loader');
+    let popinEventsAdded = false;
+    let popin, popinContent, popinClose, popinNext, popinPrev, loader;
     let currentPic = 0;
     let imgLoading = false;
 
@@ -48,7 +34,7 @@ const loadContent = () => {
         apiUrl.search = new URLSearchParams({
             //_embed: true,
             page: startPage,
-            per_page: 9,
+            per_page: nbPosts,
             sort_column: 'menu_order'
         }).toString();
 
@@ -94,6 +80,8 @@ const loadContent = () => {
                 'click',
                 e => {
                     e.preventDefault();
+
+                    if (wWidth < 580) return;
                     loadingPopin();
                     loadPopin(link);
                 },
@@ -166,7 +154,7 @@ const loadContent = () => {
 
             loadImage(imgs)
                 .then(allImgs => {
-                    macy.recalculate(true, true);
+                    if(macy) macy.recalculate();
 
                     allImgs.map(img => {
                         img.classList.remove('pic-new');
@@ -184,6 +172,9 @@ const loadContent = () => {
 
                     // Increase every time content is loaded
                     ++startPage;
+
+                    loaderPics.classList.remove('on');
+                    portfolio.classList.remove('off');
                 })
                 .catch(err => {
                     console.error('One or more images have failed to load :( ', err.errored);
@@ -192,40 +183,80 @@ const loadContent = () => {
         } else if (request.status === 400) {
             // Start over at begining of pics in popin if loading pics was made from popin
             if (loadFromPopin) nextPic(true);
-        }
 
-        loaderPics.classList.remove('on');
-        portfolio.classList.remove('off');
+            loaderPics.classList.remove('on');
+            portfolio.classList.remove('off');
+        }
     };
 
-    // Popin events
-    popinClose.addEventListener(
-        'click',
-        e => {
-            e.stopImmediatePropagation();
-            document.documentElement.classList.remove('no-scroll');
-            popin.classList.remove('on');
-            macy.recalculate(true, true);
-        },
-        false
-    );
+    const handlePopin = () => {
+        popin = document.getElementById('popin');
+        popinContent = popin.querySelector('#popin-content');
+        popinClose = popin.querySelector('#popin-close');
+        popinNext = popin.querySelector('#popin-next');
+        popinPrev = popin.querySelector('#popin-prev');
+        loader = popin.querySelector('#loader');
+        currentPic = 0;
+        imgLoading = false;
 
-    popinNext.addEventListener(
-        'click',
-        e => {
-            e.target.blur();
-            nextPic(false);
-        },
-        false
-    );
-    popinPrev.addEventListener(
-        'click',
-        e => {
-            e.target.blur();
-            prevPic(false);
-        },
-        false
-    );
+        popinClose.addEventListener(
+            'click',
+            e => {
+                e.stopImmediatePropagation();
+                document.documentElement.classList.remove('no-scroll');
+                popin.classList.remove('on');
+                if(macy) macy.recalculate();
+            },
+            false
+        );
+
+        popinNext.addEventListener(
+            'click',
+            e => {
+                e.target.blur();
+                nextPic(false);
+            },
+            false
+        );
+        popinPrev.addEventListener(
+            'click',
+            e => {
+                e.target.blur();
+                prevPic(false);
+            },
+            false
+        );
+
+        popinEventsAdded = true;
+    };
+
+    // Desktop layout
+    const launchDesktopLayout = () => {
+        if(!macy){
+            macy = Macy({
+                container: '#portfolio',
+                waitForImages: false,
+                useOwnImageLoader: true,
+                columns: 1,
+                margin: 0,
+                mobileFirst: true,
+                useImageLoader: false,
+                breakAt: {
+                    1100: 3,
+                    800: 2
+                }
+            });
+        }
+
+        if (!popinEventsAdded){
+            handlePopin();
+        }
+    }
+    
+    if (wWidth >= 580) launchDesktopLayout();
+
+    // First load
+    loadPics();
 
     // Where the magic happens
     // Checks if IntersectionObserver is supported
@@ -242,8 +273,16 @@ const loadContent = () => {
         loadMoreObserver.observe(btnLoadMore);
     }
 
-    // First load
-    loadPics();
+    // Resize
+    window.addEventListener('resize', () => {
+        if (tick) return;
+        window.requestAnimationFrame(() => {
+            wWidth = window.innerWidth;
+            if (wWidth >= 580) launchDesktopLayout();
+            tick = false;
+        });
+        tick = true;
+    });
 };
 
 export default loadContent;
